@@ -1,6 +1,8 @@
-const mongoose = require('mongoose');
+import { model } from 'mongoose';
+import { NextFunction, Request, Response } from "express";
+import { DeviceModel } from "../models/device.model";
 
-const Device = mongoose.model('Devices');
+const Device = model('Devices');
 
 class DevicesController {
   /**
@@ -8,9 +10,9 @@ class DevicesController {
    *
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
-   * @param {function} next - next middleware
+   * @param {NextFunction} next - next middleware
    */
-  static list(req, response, next) {
+  static list(req: Request, response: Response, next: NextFunction): void {
     Device.find({}, (err, list) => {
       if (err) {
         return next(err);
@@ -24,9 +26,9 @@ class DevicesController {
    *
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
-   * @param {function} next - next middleware
+   * @param {NextFunction} next - next middleware
    */
-  static create(req, response, next) {
+  static create(req: Request, response: Response, next: NextFunction): void {
     const newDevice = new Device(req.body);
     newDevice.save((err, device) => {
       if (err) {
@@ -42,9 +44,9 @@ class DevicesController {
    *
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
-   * @param {function} next - next middleware
+   * @param {NextFunction} next - next middleware
    */
-  static getDevice(req, response, next) {
+  static getDevice(req: Request, response: Response, next: NextFunction): void {
     Device.findOne({ _id: req.params.deviceId }, (err, device) => {
       if (err) {
         return next(err);
@@ -64,14 +66,14 @@ class DevicesController {
    *
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
-   * @param {function} next - next middleware
+   * @param {NextFunction} next - next middleware
    */
-  static updateDevice(req, response, next) {
+  static updateDevice(req: Request, response: Response, next: NextFunction): void {
     const params = req.body;
     Device.findOneAndUpdate(
       { _id: req.params.deviceId },
       { $set: params }, { new: true },
-      (err, device) => {
+      (err, device: DeviceModel) => {
         if (err) {
           return next(err);
         }
@@ -95,7 +97,7 @@ class DevicesController {
    *    has synced succesfully.
    *    Otherwise: resolved immediately.
    */
-  static onDeviceUpdated(device, params) {
+  static onDeviceUpdated(device: DeviceModel, params: DeviceModel): Promise<void> {
     if (!params.state) {
       return Promise.resolve();
     }
@@ -111,9 +113,9 @@ class DevicesController {
    * Delete selected device
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
-   * @param {function} next - next middleware
+   * @param {NextFunction} next - next middleware
    */
-  static deleteDevice(req, response, next) {
+  static deleteDevice(req: Request, response: Response, next: NextFunction): void {
     Device.remove({
       _id: req.params.deviceId,
     }, (err) => {
@@ -125,4 +127,4 @@ class DevicesController {
   }
 }
 
-module.exports = DevicesController;
+export default DevicesController;

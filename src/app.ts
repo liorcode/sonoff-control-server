@@ -1,12 +1,11 @@
-const express = require('express');
-const morgan = require('morgan');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-
-require('./models/device.model');
-const wsServer = require('./wsServer');
-const apiRoutes = require('./routes/api.routes');
-const sonoffRoutes = require('./routes/sonoff.routes');
+import express from 'express';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import './models/device.model';
+import wsServer from './wsServer';
+import apiRoutes from './routes/api.routes';
+import sonoffRoutes from './routes/sonoff.routes';
 
 const app = express();
 // mongoose instance connection url connection
@@ -23,10 +22,7 @@ wsServer(app);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  err.requestedUrl = req.originalUrl;
-  next(err);
+  next(new ServerError('Not Found', 404, req.originalUrl));
 });
 
 // error handler
@@ -38,5 +34,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-
-module.exports = app;
+export default app;

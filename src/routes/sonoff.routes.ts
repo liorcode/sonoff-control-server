@@ -1,7 +1,7 @@
-const logger = require('winston');
-const serverConfig = require('../config/server.json');
+import logger from 'winston';
+const serverConfig = require('../../config/server.json');
 
-module.exports = (app) => {
+export default (app) => {
   /** Request example:
    * { accept: 'ws;2',
      version: 2,

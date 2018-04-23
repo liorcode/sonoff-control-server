@@ -1,15 +1,16 @@
-const logger = require('winston');
-const mongoose = require('mongoose');
-const uuid = require('uuid4');
-const DeviceSocket = require('../lib/deviceSocket');
+import logger from 'winston';
+import { model } from 'mongoose';
+import { v4 as uuid } from "uuid";
+import DeviceSocket from '../lib/deviceSocket';
+import { DeviceModel } from "../models/device.model";
 
-const Device = mongoose.model('Devices');
+const Device = model('Devices');
 
 class SonoffRequestHandler {
-  constructor(conn) {
-    this.connection = conn;
-    this.apiKey = uuid();
-    this.device = null; // will be set on first message from device (register)
+  apiKey = uuid();
+  device: DeviceModel = null; // will be set on first message from device (register)
+
+  constructor(readonly connection) {
   }
 
   /**
@@ -39,7 +40,7 @@ class SonoffRequestHandler {
 
     switch (action) {
       case 'date':
-        this.handleDate(req);
+        this.handleDate();
         break;
       case 'register':
         this.handleRegister(req);
@@ -74,7 +75,7 @@ class SonoffRequestHandler {
   handleQuery(req) {
     const { params } = req;
     if (params.includes('timers')) {
-      this.handleTimersRequest(req);
+      this.handleTimersRequest();
     } else {
       logger.warn('Unknown query', req);
       this.respond();
@@ -111,7 +112,7 @@ class SonoffRequestHandler {
   }
 
   handleRegister(req) {
-    Device.findOne({ deviceId: req.deviceid }, (err, device) => {
+    Device.findOne({ deviceId: req.deviceid }, (err, device: DeviceModel) => {
       if (device !== null) {
         // already exists
         this.device = device;
@@ -134,7 +135,7 @@ class SonoffRequestHandler {
 
         // Set device manager to the device document
         this.device.setConnection(new DeviceSocket(this.connection, this.apiKey, this.device));
-        logger.info('Registered device', this.device.deviceId);
+        logger.info('Registered device', this.device.id);
         this.respond();
       });
     });
@@ -144,7 +145,7 @@ class SonoffRequestHandler {
     const resp = Object.assign({
       error: 0,
       apikey: this.apiKey,
-      deviceid: this.device.deviceId,
+      deviceid: this.device.id,
     }, additionalParams);
     logger.info('WS | Responding with:', resp);
     this.connection.send(JSON.stringify(resp));
@@ -157,4 +158,4 @@ class SonoffRequestHandler {
   }
 }
 
-module.exports = SonoffRequestHandler;
+export default SonoffRequestHandler;

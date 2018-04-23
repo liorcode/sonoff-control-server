@@ -1,17 +1,17 @@
-const WebSocket = require('ws');
-const https = require('https');
-const fs = require('fs');
-const url = require('url');
-const logger = require('winston');
+import WebSocket from 'ws';
+import https from 'https';
+import fs from 'fs';
+import url from 'url';
+import logger from 'winston';
 const serverConfig = require('./config/server.json');
 
-const SonoffRequestHandler = require('./controllers/sonoff.controller');
+import SonoffRequestHandler from './controllers/sonoff.controller';
 
 const opts = {
   key: fs.readFileSync(`./certs/${serverConfig.sslKeyFile}`),
   cert: fs.readFileSync(`./certs/${serverConfig.sslCertFile}`),
 };
-module.exports = (app) => {
+export default (app) => {
   const server = https.createServer(opts, app);
   const wss = new WebSocket.Server({ server });
   wss.on('connection', (conn, req) => {

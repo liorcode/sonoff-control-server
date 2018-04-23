@@ -1,20 +1,23 @@
-const logger = require('winston');
-const _ = require('lodash');
-const WebSocket = require('ws');
+import logger from 'winston';
+import WebSocket from 'ws';
+import { DeviceModel, DeviceState } from "../models/device.model";
+import { TimerParams } from "../models/timer.schema";
+
+type DeviceMessage = DeviceState & {
+  timers: TimerParams[] | 0;
+}
 
 class DeviceSocket {
-  constructor(connection, apiKey, device) {
-    this.connection = connection;
-    this.apiKey = apiKey;
-    this.device = device;
-    this.pendingMessages = new Map();
+  pendingMessages = new Map();
+
+  constructor(readonly connection: WebSocket, readonly apiKey: string, readonly device: DeviceModel) {
   }
 
   /**
    * Returns true if the websocket state is open
    * @returns {boolean}
    */
-  isConnectionAlive() {
+  isConnectionAlive(): boolean {
     return this.connection.readyState === WebSocket.OPEN;
   }
 
@@ -23,27 +26,27 @@ class DeviceSocket {
    * @param {object} newState - State parameters to sync with device
    * @returns {Promise<any>} - Resolved on device ack or rejects on timeout
    */
-  syncState(newState) {
+  syncState(newState: DeviceState): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error('Cannot sync device state: timeout'));
       }, 2000);
 
-      const message = Object.assign({}, newState);
+      const message: DeviceMessage = Object.assign({}, newState);
       if (message.timers) {
         // when there are no timers, the timers property must be 0
         message.timers = message.timers.length === 0 ? 0
           // if there are timers, just get the needed props
-          : message.timers.map(timer => ({
-            // enabled: timer.enabled,
+          : message.timers.map((timer: TimerParams) => ({
+            enabled: timer.enabled,
             at: timer.at,
             type: timer.type,
             do: { switch: timer.do.switch },
           }));
       }
 
-      return this.sendMessage(message).then((data) => {
-        resolve(data);
+      return this.sendMessage(message).then(() => {
+        resolve();
         clearInterval(timeout);
       }, reject);
     });
@@ -54,7 +57,7 @@ class DeviceSocket {
    * Removes the acknowladged message from the pending messages queue.
    * @param {string} messageId
    */
-  onAck(messageId) {
+  onAck(messageId: string) {
     if (!this.pendingMessages.has(messageId)) {
       logger.warn('Device sent an ack for unknown message %s', messageId);
       return;
@@ -70,7 +73,7 @@ class DeviceSocket {
    * @param {object} params parameters to send to device
    * @returns {Promise<any>}
    */
-  sendMessage(params) {
+  sendMessage(params: DeviceState) {
     if (!this.isConnectionAlive()) {
       throw new Error('Cannot send WS message: connection is not open');
     }
@@ -78,7 +81,7 @@ class DeviceSocket {
     const message = {
       apikey: this.apiKey,
       action: 'update',
-      deviceid: this.device.deviceId,
+      deviceid: this.device.id,
       params,
       userAgent: 'app',
       from: 'app',
@@ -97,4 +100,4 @@ class DeviceSocket {
   }
 }
 
-module.exports = DeviceSocket;
+export default DeviceSocket;

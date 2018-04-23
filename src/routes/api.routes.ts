@@ -1,11 +1,11 @@
-const deviceController = require('../controllers/devices.controller');
-const timersController = require('../controllers/timers.controller');
+import deviceController from '../controllers/devices.controller';
+import timersController from '../controllers/timers.controller';
 
 /**
  * API routes for CRUD operations on the device
  * @param {object} app - express application
  */
-module.exports = (app) => {
+export default (app) => {
   app.route('/devices')
     .get(deviceController.list)
     .post(deviceController.create);

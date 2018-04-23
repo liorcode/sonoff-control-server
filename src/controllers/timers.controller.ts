@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const logger = require('winston');
-const _ = require('lodash');
+import logger from 'winston';
+import { model } from 'mongoose';
+import _ from 'lodash';
 
-const Device = mongoose.model('Devices');
+const Device = model('Devices');
 
 class TimersController {
   /**
@@ -163,4 +163,4 @@ class TimersController {
   }
 }
 
-module.exports = TimersController;
+export default TimersController;

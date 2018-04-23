@@ -6,6 +6,8 @@
     "start": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@types/uuid": "^3.4.3",
+    "@types/ws": "^4.0.2",
     "body-parser": "~1.18.2",
     "debug": "~2.6.9",
     "express": "~4.15.5",
@@ -13,14 +15,22 @@
     "mongodb": "^3.0.1",
     "mongoose": "^5.0.9",
     "morgan": "~1.9.0",
+    "node-uuid": "^1.4.8",
     "uuid4": "^1.0.0",
     "winston": "^2.4.0",
     "ws": "^4.0.0"
   },
   "devDependencies": {
+    "@types/express": "^4.11.1",
+    "@types/lodash": "^4.14.107",
+    "@types/mongodb": "^3.0.15",
+    "@types/mongoose": "^5.0.10",
+    "@types/morgan": "^1.7.35",
+    "@types/winston": "^2.3.9",
     "eslint": "^4.15.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
-    "nodemon": "^1.14.11"
+    "nodemon": "^1.14.11",
+    "typescript": "^2.8.3"
   }
 }
