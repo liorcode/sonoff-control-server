@@ -1,11 +1,12 @@
 import deviceController from '../controllers/devices.controller';
 import timersController from '../controllers/timers.controller';
+import { Express } from "express";
 
 /**
  * API routes for CRUD operations on the device
  * @param {object} app - express application
  */
-export default (app) => {
+export default (app: Express) => {
   app.route('/devices')
     .get(deviceController.list)
     .post(deviceController.create);

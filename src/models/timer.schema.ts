@@ -1,13 +1,13 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
-export type TimerParams = {
-  enabled?: boolean,
-  type: 'once' | 'repeat',
-  at: string,
+export interface ITimerParams {
+  enabled?: boolean;
+  type: 'once' | 'repeat';
+  at: string;
   do: { switch: 'on' | 'off' }
-};
+}
 
-export type TimerModel = Document & TimerParams;
+export type ITimerModel = Document & ITimerParams;
 
 const TimerSchema = new Schema({
   enabled: {

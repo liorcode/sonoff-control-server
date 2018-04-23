@@ -2,15 +2,20 @@ import logger from 'winston';
 import { model } from 'mongoose';
 import { v4 as uuid } from "uuid";
 import DeviceSocket from '../lib/deviceSocket';
-import { DeviceModel } from "../models/device.model";
+import { IDeviceModel } from "../models/device.model";
+import WebSocket = require("ws");
 
 const Device = model('Devices');
 
+type SonoffRequest = {
+  [key: string]: any;
+};
+
 class SonoffRequestHandler {
   apiKey = uuid();
-  device: DeviceModel = null; // will be set on first message from device (register)
+  device: IDeviceModel = null; // will be set on first message from device (register)
 
-  constructor(readonly connection) {
+  constructor(readonly connection: WebSocket) {
   }
 
   /**
@@ -18,7 +23,7 @@ class SonoffRequestHandler {
    * @param {object} req - Request parameters
    * @return {void}
    */
-  handleRequest(req) {
+  handleRequest(req: SonoffRequest) {
     if (req.action) {
       // device want to do something
       this.handleAction(req);
@@ -33,7 +38,7 @@ class SonoffRequestHandler {
    * @param {object} req - request parameters
    * @return {void}
    */
-  handleAction(req) {
+  handleAction(req: SonoffRequest) {
     const { action } = req;
 
     logger.info('Handling action', action);
@@ -62,7 +67,7 @@ class SonoffRequestHandler {
    * @param {object} req - request parameters
    * @return {void}
    */
-  handleAck(req) {
+  handleAck(req: SonoffRequest) {
     logger.info('Handling ack', req);
     this.device.getConnection().onAck(req.sequence);
   }
@@ -72,7 +77,7 @@ class SonoffRequestHandler {
    * Currently the only supported query is 'timers'
    * @param {object} req - Request parameters
    */
-  handleQuery(req) {
+  handleQuery(req: SonoffRequest) {
     const { params } = req;
     if (params.includes('timers')) {
       this.handleTimersRequest();
@@ -90,7 +95,7 @@ class SonoffRequestHandler {
     });
   }
 
-  handleUpdate(req) {
+  handleUpdate(req: SonoffRequest) {
     const { params } = req;
     this.device.set({
       version: params.fwVersion,
@@ -111,8 +116,8 @@ class SonoffRequestHandler {
     });
   }
 
-  handleRegister(req) {
-    Device.findOne({ deviceId: req.deviceid }, (err, device: DeviceModel) => {
+  handleRegister(req: SonoffRequest) {
+    Device.findOne({ deviceId: req.deviceid }, (err, device: IDeviceModel) => {
       if (device !== null) {
         // already exists
         this.device = device;

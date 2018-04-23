@@ -1,4 +1,4 @@
-import express from 'express';
+import express, {NextFunction, Request, Response} from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
@@ -21,12 +21,12 @@ sonoffRoutes(app);
 wsServer(app);
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   next(new ServerError('Not Found', 404, req.originalUrl));
 });
 
 // error handler
-app.use((err, req, res, next) => {
+app.use((err: ServerError, req: Request, res: Response) => {
   res.status(err.status || 500);
   res.json({
     message: err.message,

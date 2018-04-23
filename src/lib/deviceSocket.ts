@@ -1,16 +1,16 @@
 import logger from 'winston';
 import WebSocket from 'ws';
-import { DeviceModel, DeviceState } from "../models/device.model";
-import { TimerParams } from "../models/timer.schema";
+import { IDeviceModel, IDeviceState } from "../models/device.model";
+import { ITimerParams } from "../models/timer.schema";
 
-type DeviceMessage = DeviceState & {
-  timers: TimerParams[] | 0;
+type DeviceMessage = Partial<IDeviceState> & {
+  timers: ITimerParams[] | 0;
 }
 
 class DeviceSocket {
   pendingMessages = new Map();
 
-  constructor(readonly connection: WebSocket, readonly apiKey: string, readonly device: DeviceModel) {
+  constructor(readonly connection: WebSocket, readonly apiKey: string, readonly device: IDeviceModel) {
   }
 
   /**
@@ -26,7 +26,7 @@ class DeviceSocket {
    * @param {object} newState - State parameters to sync with device
    * @returns {Promise<any>} - Resolved on device ack or rejects on timeout
    */
-  syncState(newState: DeviceState): Promise<void> {
+  syncState(newState: Partial<IDeviceState>): Promise<void> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error('Cannot sync device state: timeout'));
@@ -37,7 +37,7 @@ class DeviceSocket {
         // when there are no timers, the timers property must be 0
         message.timers = message.timers.length === 0 ? 0
           // if there are timers, just get the needed props
-          : message.timers.map((timer: TimerParams) => ({
+          : message.timers.map((timer: ITimerParams) => ({
             enabled: timer.enabled,
             at: timer.at,
             type: timer.type,
@@ -73,7 +73,7 @@ class DeviceSocket {
    * @param {object} params parameters to send to device
    * @returns {Promise<any>}
    */
-  sendMessage(params: DeviceState) {
+  sendMessage(params: IDeviceState) {
     if (!this.isConnectionAlive()) {
       throw new Error('Cannot send WS message: connection is not open');
     }

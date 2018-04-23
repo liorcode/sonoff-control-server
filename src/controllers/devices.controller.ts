@@ -1,6 +1,6 @@
 import { model } from 'mongoose';
 import { NextFunction, Request, Response } from "express";
-import { DeviceModel } from "../models/device.model";
+import { IDeviceModel } from "../models/device.model";
 
 const Device = model('Devices');
 
@@ -73,7 +73,7 @@ class DevicesController {
     Device.findOneAndUpdate(
       { _id: req.params.deviceId },
       { $set: params }, { new: true },
-      (err, device: DeviceModel) => {
+      (err, device: IDeviceModel) => {
         if (err) {
           return next(err);
         }
@@ -97,7 +97,7 @@ class DevicesController {
    *    has synced succesfully.
    *    Otherwise: resolved immediately.
    */
-  static onDeviceUpdated(device: DeviceModel, params: DeviceModel): Promise<void> {
+  static onDeviceUpdated(device: IDeviceModel, params: IDeviceModel): Promise<void> {
     if (!params.state) {
       return Promise.resolve();
     }

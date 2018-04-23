@@ -1,24 +1,24 @@
-import { Schema, model, Document } from 'mongoose';
-import TimerSchema, { TimerModel } from './timer.schema';
+import { Schema, model, Document, Types as mongooseTypes } from 'mongoose';
+import TimerSchema, { ITimerModel } from './timer.schema';
 import DeviceSocket from "../lib/deviceSocket";
 
-export type DeviceState = {
-  switch: 'on' | 'off',
-  startup: 'on' | 'off' | 'keep',
-  rssi: string,
-  timers: TimerModel[] | 0,
+export interface IDeviceState {
+  switch: 'on' | 'off';
+  startup: 'on' | 'off' | 'keep';
+  rssi: string;
+  timers: mongooseTypes.DocumentArray<ITimerModel>;
 }
 
-export type DeviceParams = {
-  id: string,
-  model: string,
-  manufacturerName: string,
-  version: string,
-  name: string,
-  state: DeviceState,
+export interface IDeviceParams {
+  id: string;
+  model: string;
+  manufacturerName: string;
+  version: string;
+  name: string;
+  state: IDeviceState;
 }
 
-export type DeviceModel = Document & DeviceParams & {
+export type IDeviceModel = Document & IDeviceParams & {
   getConnection (): DeviceSocket,
   isOnline(): boolean,
   setConnection(connection: DeviceSocket): Map<String, DeviceSocket>,
