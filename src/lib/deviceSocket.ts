@@ -3,8 +3,11 @@ import WebSocket from 'ws';
 import { IDeviceModel, IDeviceState } from "../models/device.model";
 import { ITimerParams } from "../models/timer.schema";
 
-type DeviceMessage = Partial<IDeviceState> & {
-  timers: ITimerParams[] | 0;
+interface IDeviceMessage {
+  switch?: 'on' | 'off';
+  startup?: 'on' | 'off' | 'keep';
+  rssi?: string;
+  timers?: ITimerParams[] | 0;
 }
 
 class DeviceSocket {
@@ -32,7 +35,7 @@ class DeviceSocket {
         reject(new Error('Cannot sync device state: timeout'));
       }, 2000);
 
-      const message: DeviceMessage = Object.assign({}, newState);
+      const message: IDeviceMessage = Object.assign({}, newState);
       if (message.timers) {
         // when there are no timers, the timers property must be 0
         message.timers = message.timers.length === 0 ? 0
@@ -73,7 +76,7 @@ class DeviceSocket {
    * @param {object} params parameters to send to device
    * @returns {Promise<any>}
    */
-  sendMessage(params: IDeviceState) {
+  sendMessage(params: IDeviceMessage) {
     if (!this.isConnectionAlive()) {
       throw new Error('Cannot send WS message: connection is not open');
     }

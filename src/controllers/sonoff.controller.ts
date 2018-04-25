@@ -123,7 +123,7 @@ class SonoffRequestHandler {
         this.device = device;
       } else {
         // doesn't exist. create new
-        this.device = new Device({
+        this.device = <IDeviceModel>new Device({
           deviceId: req.deviceid,
           model: req.model,
           version: req.romVersion,
