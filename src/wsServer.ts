@@ -3,7 +3,7 @@ import https from 'https';
 import fs from 'fs';
 import url from 'url';
 import logger from 'winston';
-const serverConfig = require('./config/server.json');
+const serverConfig = require('../config/server.json');
 
 import SonoffRequestHandler from './controllers/sonoff.controller';
 import {Express} from "express";
