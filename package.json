@@ -6,6 +6,7 @@
     "start": "concurrently -k \"npm run serve\" \"npm run watch\"",
     "serve": "nodemon ./dist/server",
     "build": "tsc",
+    "lint": "tslint --project .",
     "watch": "tsc -w"
   },
   "dependencies": {
@@ -32,10 +33,9 @@
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.9",
     "@types/ws": "^4.0.2",
-    "eslint": "^4.15.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
     "nodemon": "^1.14.11",
+    "tslint": "^5.9.1",
+    "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.3"
   }
 }
