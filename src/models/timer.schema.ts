@@ -4,7 +4,7 @@ export interface ITimerParams {
   enabled?: boolean;
   type: 'once' | 'repeat';
   at: string;
-  do: { switch: 'on' | 'off' }
+  do: { switch: 'on' | 'off' };
 }
 
 export type ITimerModel = Document & ITimerParams;
@@ -29,15 +29,14 @@ const TimerSchema = new Schema({
   },
 }, {
   toJSON: {
-      /**
-       * Clean mongoose attributes from returned objects
-       */
-      transform(doc, ret) {
-          /* eslint no-param-reassign: "off", no-underscore-dangle: "off" */
-          delete ret._id;
-          delete ret.__v;
-      },
-  }
+    /**
+     * Clean mongoose attributes from returned objects
+     */
+    transform(doc, ret) {
+      delete ret._id;
+      delete ret.__v;
+    },
+  },
 });
 
 export default TimerSchema;

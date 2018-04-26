@@ -25,7 +25,7 @@ function normalizePort(val: string): string | number {
     return port;
   }
 
-  throw new Error(`Invalid port number: ${val}`)
+  throw new Error(`Invalid port number: ${val}`);
 }
 const port = normalizePort(process.env.SERVER_API_PORT);
 // Store in express

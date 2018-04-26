@@ -1,6 +1,6 @@
 import deviceController from '../controllers/devices.controller';
 import timersController from '../controllers/timers.controller';
-import { Express } from "express";
+import { Express } from 'express';
 
 /**
  * API routes for CRUD operations on the device

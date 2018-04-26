@@ -1,6 +1,6 @@
 import { model } from 'mongoose';
-import { NextFunction, Request, Response } from "express";
-import { IDeviceModel } from "../models/device.model";
+import { NextFunction, Request, Response } from 'express';
+import { IDeviceModel } from '../models/device.model';
 
 const Device = model('Devices');
 

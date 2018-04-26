@@ -3,8 +3,8 @@ import { model } from 'mongoose';
 import _ from 'lodash';
 
 const Device = model('Devices');
-import { NextFunction, Request, Response } from "express";
-import { IDeviceModel } from "../models/device.model";
+import { NextFunction, Request, Response } from 'express';
+import { IDeviceModel } from '../models/device.model';
 
 class TimersController {
   /**

@@ -1,6 +1,6 @@
 import { Schema, model, Document, Types as mongooseTypes } from 'mongoose';
 import TimerSchema, { ITimerModel } from './timer.schema';
-import DeviceSocket from "../lib/deviceSocket";
+import DeviceSocket from '../lib/deviceSocket';
 
 export interface IDeviceState {
   switch: 'on' | 'off';
@@ -22,8 +22,8 @@ export type IDeviceModel = Document & IDeviceParams & {
   getConnection (): DeviceSocket,
   isOnline(): boolean,
   setConnection(connection: DeviceSocket): Map<String, DeviceSocket>,
-  removeConnection(): boolean
-}
+  removeConnection(): boolean,
+};
 
 const socketInstances = new Map<string, DeviceSocket>();
 const DeviceSchema = new Schema({
@@ -62,15 +62,14 @@ const DeviceSchema = new Schema({
   },
 }, {
   toJSON: {
-      /**
-       * Clean mongoose attributes from returned objects
-       */
-      transform(doc, ret) {
-          /* eslint no-param-reassign: "off", no-underscore-dangle: "off" */
-          delete ret._id;
-          delete ret.__v;
-      },
-  }
+    /**
+     * Clean mongoose attributes from returned objects
+     */
+    transform(doc, ret) {
+      delete ret._id;
+      delete ret.__v;
+    },
+  },
 });
 
 

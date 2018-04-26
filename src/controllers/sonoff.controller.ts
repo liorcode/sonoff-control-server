@@ -1,9 +1,9 @@
 import logger from 'winston';
 import { model } from 'mongoose';
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 import DeviceSocket from '../lib/deviceSocket';
-import { IDeviceModel } from "../models/device.model";
-import WebSocket = require("ws");
+import { IDeviceModel } from '../models/device.model';
+import WebSocket = require('ws');
 
 const Device = model('Devices');
 

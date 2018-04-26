@@ -1,7 +1,7 @@
 import logger from 'winston';
 import WebSocket from 'ws';
-import { IDeviceModel, IDeviceState } from "../models/device.model";
-import { ITimerParams } from "../models/timer.schema";
+import { IDeviceModel, IDeviceState } from '../models/device.model';
+import { ITimerParams } from '../models/timer.schema';
 
 interface IDeviceMessage {
   switch?: 'on' | 'off';
@@ -13,7 +13,9 @@ interface IDeviceMessage {
 class DeviceSocket {
   pendingMessages = new Map();
 
-  constructor(readonly connection: WebSocket, readonly apiKey: string, readonly device: IDeviceModel) {
+  constructor(readonly connection: WebSocket,
+              readonly apiKey: string,
+              readonly device: IDeviceModel) {
   }
 
   /**
@@ -82,10 +84,10 @@ class DeviceSocket {
     }
 
     const message = {
+      params,
       apikey: this.apiKey,
       action: 'update',
       deviceid: this.device.id,
-      params,
       userAgent: 'app',
       from: 'app',
       sequence: Date.now().toString(),

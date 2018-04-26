@@ -1,5 +1,5 @@
 import logger from 'winston';
-import { Express } from "express";
+import { Express } from 'express';
 
 export default (app: Express) => {
   /** Request example:

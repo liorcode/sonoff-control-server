@@ -4,7 +4,7 @@ import fs from 'fs';
 import url from 'url';
 import logger from 'winston';
 import SonoffRequestHandler from './controllers/sonoff.controller';
-import {Express} from "express";
+import { Express } from 'express';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env file into process.env
