@@ -1,7 +1,0 @@
-{
-  "ip": "192.168.1.113",
-  "apiPort": 1080,
-  "webSocketPort": 443,
-  "sslKeyFile": "66805011.key",
-  "sslCertFile": "66805011.cert"
-}

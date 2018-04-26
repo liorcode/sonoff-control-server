@@ -3,15 +3,16 @@ import https from 'https';
 import fs from 'fs';
 import logger from 'winston';
 import ErrnoException = NodeJS.ErrnoException;
+import dotenv from 'dotenv';
 
-/**
- * Get port from environment and store in Express.
- */
+// Load environment variables from .env file into process.env
+dotenv.config();
+
 /**
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val: string) {
+function normalizePort(val: string): string | number {
   const port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -24,18 +25,18 @@ function normalizePort(val: string) {
     return port;
   }
 
-  return false;
+  throw new Error(`Invalid port number: ${val}`)
 }
-const port = normalizePort(process.env.PORT || '1080');
+const port = normalizePort(process.env.SERVER_API_PORT);
+// Store in express
 app.set('port', port);
-
 
 /**
  * Create HTTPS server.
  */
 const opts = {
-  key: fs.readFileSync('./certs/66805011.key'),
-  cert: fs.readFileSync('./certs/66805011.cert'),
+  key: fs.readFileSync(`./certs/${process.env.SSL_KEY_FILE}`),
+  cert: fs.readFileSync(`./certs/${process.env.SSL_CERT_FILE}`),
 };
 const server = https.createServer(opts, app);
 
