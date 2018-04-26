@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const logger = require('winston');
-const _ = require('lodash');
+import logger from 'winston';
+import { model } from 'mongoose';
+import _ from 'lodash';
 
-const Device = mongoose.model('Devices');
+const Device = model('Devices');
+import { NextFunction, Request, Response } from "express";
+import { IDeviceModel } from "../models/device.model";
 
 class TimersController {
   /**
@@ -12,10 +14,10 @@ class TimersController {
    * @param {http.ServerResponse} response - Response object
    * @param {function} next - next middleware
    */
-  static create(req, response, next) {
+  static create(req: Request, response: Response, next: NextFunction) {
     const { deviceId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device) => {
+    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -42,7 +44,7 @@ class TimersController {
    * @param {http.ServerResponse} response - Response object
    * @param {function} next - next middleware
    */
-  static list(req, response, next) {
+  static list(req: Request, response: Response, next: NextFunction) {
     const { deviceId } = req.params;
 
     Device.findOne({ deviceId })
@@ -63,10 +65,10 @@ class TimersController {
    * @param {http.ServerResponse} response - Response object
    * @param {function} next - next middleware
    */
-  static getTimer(req, response, next) {
+  static getTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device) => {
+    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -93,10 +95,10 @@ class TimersController {
    * @param {http.ServerResponse} response - Response object
    * @param {function} next - next middleware
    */
-  static updateTimer(req, response, next) {
+  static updateTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device) => {
+    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -123,10 +125,10 @@ class TimersController {
    * @param {http.ServerResponse} response - Response object
    * @param {function} next - next middleware
    */
-  static deleteTimer(req, response, next) {
+  static deleteTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device) => {
+    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -154,7 +156,7 @@ class TimersController {
    * @param {object} device - The device model
    * @returns {Promise} - resolves when the device has synced successfully
    */
-  static onTimerUpdated(device) {
+  static onTimerUpdated(device: IDeviceModel) {
     if (!device.isOnline()) {
       throw new Error('Cannot sync device: device is offline');
     }
@@ -163,4 +165,4 @@ class TimersController {
   }
 }
 
-module.exports = TimersController;
+export default TimersController;

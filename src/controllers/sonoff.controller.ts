@@ -1,15 +1,21 @@
-const logger = require('winston');
-const mongoose = require('mongoose');
-const uuid = require('uuid4');
-const DeviceSocket = require('../lib/deviceSocket');
+import logger from 'winston';
+import { model } from 'mongoose';
+import { v4 as uuid } from "uuid";
+import DeviceSocket from '../lib/deviceSocket';
+import { IDeviceModel } from "../models/device.model";
+import WebSocket = require("ws");
 
-const Device = mongoose.model('Devices');
+const Device = model('Devices');
+
+type SonoffRequest = {
+  [key: string]: any;
+};
 
 class SonoffRequestHandler {
-  constructor(conn) {
-    this.connection = conn;
-    this.apiKey = uuid();
-    this.device = null; // will be set on first message from device (register)
+  apiKey = uuid();
+  device: IDeviceModel = null; // will be set on first message from device (register)
+
+  constructor(readonly connection: WebSocket) {
   }
 
   /**
@@ -17,7 +23,7 @@ class SonoffRequestHandler {
    * @param {object} req - Request parameters
    * @return {void}
    */
-  handleRequest(req) {
+  handleRequest(req: SonoffRequest) {
     if (req.action) {
       // device want to do something
       this.handleAction(req);
@@ -32,14 +38,14 @@ class SonoffRequestHandler {
    * @param {object} req - request parameters
    * @return {void}
    */
-  handleAction(req) {
+  handleAction(req: SonoffRequest) {
     const { action } = req;
 
     logger.info('Handling action', action);
 
     switch (action) {
       case 'date':
-        this.handleDate(req);
+        this.handleDate();
         break;
       case 'register':
         this.handleRegister(req);
@@ -61,7 +67,7 @@ class SonoffRequestHandler {
    * @param {object} req - request parameters
    * @return {void}
    */
-  handleAck(req) {
+  handleAck(req: SonoffRequest) {
     logger.info('Handling ack', req);
     this.device.getConnection().onAck(req.sequence);
   }
@@ -71,10 +77,10 @@ class SonoffRequestHandler {
    * Currently the only supported query is 'timers'
    * @param {object} req - Request parameters
    */
-  handleQuery(req) {
+  handleQuery(req: SonoffRequest) {
     const { params } = req;
     if (params.includes('timers')) {
-      this.handleTimersRequest(req);
+      this.handleTimersRequest();
     } else {
       logger.warn('Unknown query', req);
       this.respond();
@@ -89,7 +95,7 @@ class SonoffRequestHandler {
     });
   }
 
-  handleUpdate(req) {
+  handleUpdate(req: SonoffRequest) {
     const { params } = req;
     this.device.set({
       version: params.fwVersion,
@@ -110,14 +116,14 @@ class SonoffRequestHandler {
     });
   }
 
-  handleRegister(req) {
-    Device.findOne({ deviceId: req.deviceid }, (err, device) => {
+  handleRegister(req: SonoffRequest) {
+    Device.findOne({ deviceId: req.deviceid }, (err, device: IDeviceModel) => {
       if (device !== null) {
         // already exists
         this.device = device;
       } else {
         // doesn't exist. create new
-        this.device = new Device({
+        this.device = <IDeviceModel>new Device({
           deviceId: req.deviceid,
           model: req.model,
           version: req.romVersion,
@@ -134,7 +140,7 @@ class SonoffRequestHandler {
 
         // Set device manager to the device document
         this.device.setConnection(new DeviceSocket(this.connection, this.apiKey, this.device));
-        logger.info('Registered device', this.device.deviceId);
+        logger.info('Registered device', this.device.id);
         this.respond();
       });
     });
@@ -144,7 +150,7 @@ class SonoffRequestHandler {
     const resp = Object.assign({
       error: 0,
       apikey: this.apiKey,
-      deviceid: this.device.deviceId,
+      deviceid: this.device.id,
     }, additionalParams);
     logger.info('WS | Responding with:', resp);
     this.connection.send(JSON.stringify(resp));
@@ -157,4 +163,4 @@ class SonoffRequestHandler {
   }
 }
 
-module.exports = SonoffRequestHandler;
+export default SonoffRequestHandler;

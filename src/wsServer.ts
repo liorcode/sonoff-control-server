@@ -1,20 +1,21 @@
-const WebSocket = require('ws');
-const https = require('https');
-const fs = require('fs');
-const url = require('url');
-const logger = require('winston');
-const serverConfig = require('./config/server.json');
+import WebSocket from 'ws';
+import https from 'https';
+import fs from 'fs';
+import url from 'url';
+import logger from 'winston';
+const serverConfig = require('../config/server.json');
 
-const SonoffRequestHandler = require('./controllers/sonoff.controller');
+import SonoffRequestHandler from './controllers/sonoff.controller';
+import {Express} from "express";
 
 const opts = {
   key: fs.readFileSync(`./certs/${serverConfig.sslKeyFile}`),
   cert: fs.readFileSync(`./certs/${serverConfig.sslCertFile}`),
 };
-module.exports = (app) => {
+export default (app: Express) => {
   const server = https.createServer(opts, app);
   const wss = new WebSocket.Server({ server });
-  wss.on('connection', (conn, req) => {
+  wss.on('connection', (conn: WebSocket, req) => {
     logger.info('WS | Incoming connection');
     const location = url.parse(req.url, true);
     // You might use location.query.access_token to authenticate or share sessions
@@ -22,7 +23,7 @@ module.exports = (app) => {
 
     const ctrl = new SonoffRequestHandler(conn);
 
-    conn.on('message', (message) => {
+    conn.on('message', (message: string) => {
       const reqMessage = JSON.parse(message);
       logger.info('WS | Received message', reqMessage);
       ctrl.handleRequest(reqMessage);

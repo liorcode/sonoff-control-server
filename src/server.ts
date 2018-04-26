@@ -1,13 +1,8 @@
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-const app = require('../app');
-const https = require('https');
-const fs = require('fs');
-const logger = require('winston');
+import app from './app';
+import https from 'https';
+import fs from 'fs';
+import logger from 'winston';
+import ErrnoException = NodeJS.ErrnoException;
 
 /**
  * Get port from environment and store in Express.
@@ -16,7 +11,7 @@ const logger = require('winston');
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+function normalizePort(val: string) {
   const port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -48,7 +43,7 @@ const server = https.createServer(opts, app);
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+function onError(error: ErrnoException) {
   if (error.syscall !== 'listen') {
     throw error;
   }
