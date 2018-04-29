@@ -74,21 +74,21 @@ const DeviceSchema = new Schema({
 
 
 DeviceSchema.methods.getConnection = function (): DeviceSocket {
-  return socketInstances.get(this.deviceId);
+  return socketInstances.get(this.id);
 };
 
 DeviceSchema.methods.isOnline = function (): boolean {
-  const connection = socketInstances.get(this.deviceId);
+  const connection = socketInstances.get(this.id);
   return connection && connection.isConnectionAlive();
 };
 
 
 DeviceSchema.methods.setConnection = function (connection: DeviceSocket): Map<String, DeviceSocket> {
-  return socketInstances.set(this.deviceId, connection);
+  return socketInstances.set(this.id, connection);
 };
 
 DeviceSchema.methods.removeConnection = function (): boolean {
-  return socketInstances.delete(this.deviceId);
+  return socketInstances.delete(this.id);
 };
 
 export default model('Devices', DeviceSchema);
