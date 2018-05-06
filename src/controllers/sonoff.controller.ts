@@ -83,7 +83,7 @@ class SonoffRequestHandler {
       this.handleTimersRequest();
     } else {
       logger.warn('Unknown query', req);
-      this.respond();
+      this.respondError();
     }
   }
 
@@ -105,9 +105,14 @@ class SonoffRequestHandler {
         rssi: params.rssi,
       },
     });
-    this.device.save();
+    this.device.save()
+      .then(() => {
+        this.respond();
+      })
+      .catch(() => {
+        this.respondError();
+      });
 
-    this.respond();
   }
 
   handleDate() {
@@ -116,32 +121,30 @@ class SonoffRequestHandler {
     });
   }
 
+  /**
+   * Handle register request from the device: finds the device records
+   * and sets the active WS connection to it.
+   * @precondition: The device must already exist (it must be added through the app first)
+   * @param {SonoffRequest} req
+   */
   handleRegister(req: SonoffRequest) {
-    Device.findOne({ deviceId: req.deviceid }, (err, device: IDeviceModel) => {
-      if (device !== null) {
-        // already exists
-        this.device = device;
-      } else {
-        // doesn't exist. create new
-        this.device = <IDeviceModel>new Device({
-          deviceId: req.deviceid,
-          model: req.model,
-          version: req.romVersion,
-          manufacturerName: 'Sonoff',
-          name: req.deviceid, // initial name
-        });
+    Device.findOne({ id: req.deviceid }, (err, device: IDeviceModel) => {
+      if (device === null) { // device must be registered through api first
+        throw new Error('Cannot register device: it does not exist.');
       }
 
-      this.device.save((saveErr) => {
-        if (saveErr) {
-          logger.error(saveErr);
-          return;
-        }
+      device.model = req.model;
+      device.version = req.romVersion;
+      this.device = device;
 
+      this.device.save().then((saveErr) => {
         // Set device manager to the device document
         this.device.setConnection(new DeviceSocket(this.connection, this.apiKey, this.device));
         logger.info('Registered device', this.device.id);
         this.respond();
+      }).catch((saveErr) => {
+        logger.error(saveErr);
+        this.respondError();
       });
     });
   }
@@ -154,6 +157,13 @@ class SonoffRequestHandler {
     }, additionalParams);
     logger.info('WS | Responding with:', resp);
     this.connection.send(JSON.stringify(resp));
+  }
+
+  /**
+   * Send an error message to the device
+   */
+  respondError() {
+    this.respond({ error: 1 });
   }
 
   onClose() {

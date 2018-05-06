@@ -1,6 +1,6 @@
 import logger from 'winston';
 import { model } from 'mongoose';
-import _ from 'lodash';
+import { get, last } from 'lodash';
 
 const Device = model('Devices');
 import { NextFunction, Request, Response } from 'express';
@@ -24,7 +24,7 @@ class TimersController {
 
       try {
         device.state.timers.push(req.body);
-        const createdTimer = _.last(device.state.timers);
+        const createdTimer = last(device.state.timers);
         return TimersController.onTimerUpdated(device)
           .then(() => {
             device.save();
@@ -53,7 +53,7 @@ class TimersController {
         if (err) {
           return next(err);
         }
-        const timers = _.get(device, 'state.timers', []);
+        const timers = get(device, 'state.timers', []);
         response.json(timers);
       });
   }

@@ -1,19 +1,20 @@
 import { model } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
-import { IDeviceModel } from '../models/device.model';
+import { IDeviceModel, IDeviceParams } from '../models/device.model';
+import { pick } from 'lodash';
 
 const Device = model('Devices');
 
 class DevicesController {
   /**
-   * Get a list of all the devices.
+   * Get a list of all the devices of the logged in user
    *
    * @param {http.IncomingMessage} req - Client request
    * @param {http.ServerResponse} response - Response object
    * @param {NextFunction} next - next middleware
    */
   static list(req: Request, response: Response, next: NextFunction): void {
-    Device.find({}, (err, list) => {
+    Device.find({ user: req.user }, (err, list) => {
       if (err) {
         return next(err);
       }
@@ -29,7 +30,10 @@ class DevicesController {
    * @param {NextFunction} next - next middleware
    */
   static create(req: Request, response: Response, next: NextFunction): void {
-    const newDevice = new Device(req.body);
+    const newDevice = new Device({
+      ...req.body,
+      user: req.user, // must be last, to override 'user' attribute if exists in request
+    });
     newDevice.save((err, device) => {
       if (err) {
         return next(err);
@@ -47,7 +51,7 @@ class DevicesController {
    * @param {NextFunction} next - next middleware
    */
   static getDevice(req: Request, response: Response, next: NextFunction): void {
-    Device.findOne({ _id: req.params.deviceId }, (err, device) => {
+    Device.findOne({ _id: req.params.deviceId, user: req.user }, (err, device) => {
       if (err) {
         return next(err);
       }
@@ -69,9 +73,12 @@ class DevicesController {
    * @param {NextFunction} next - next middleware
    */
   static updateDevice(req: Request, response: Response, next: NextFunction): void {
-    const params = req.body;
+    const params = pick(req.body, [
+      'name',
+      'state',
+    ]);
     Device.findOneAndUpdate(
-      { _id: req.params.deviceId },
+      { id: req.params.deviceId, user: req.user },
       { $set: params }, { new: true },
       (err, device: IDeviceModel) => {
         if (err) {
@@ -97,7 +104,7 @@ class DevicesController {
    *    has synced succesfully.
    *    Otherwise: resolved immediately.
    */
-  static onDeviceUpdated(device: IDeviceModel, params: IDeviceModel): Promise<void> {
+  static onDeviceUpdated(device: IDeviceModel, params: Partial<IDeviceParams>): Promise<void> {
     if (!params.state) {
       return Promise.resolve();
     }
@@ -117,7 +124,8 @@ class DevicesController {
    */
   static deleteDevice(req: Request, response: Response, next: NextFunction): void {
     Device.remove({
-      _id: req.params.deviceId,
+      id: req.params.deviceId,
+      user: req.user,
     }, (err) => {
       if (err) {
         return next(err);

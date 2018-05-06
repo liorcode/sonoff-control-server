@@ -1,6 +1,7 @@
 import { Schema, model, Document, Types as mongooseTypes } from 'mongoose';
 import TimerSchema, { ITimerModel } from './timer.schema';
 import DeviceSocket from '../lib/deviceSocket';
+import User, { IUserModel } from './user.model';
 
 export interface IDeviceState {
   switch: 'on' | 'off';
@@ -10,6 +11,7 @@ export interface IDeviceState {
 }
 
 export interface IDeviceParams {
+  user: IUserModel;
   id: string;
   model: string;
   manufacturerName: string;
@@ -31,6 +33,11 @@ const DeviceSchema = new Schema({
     type: String,
     required: 'Enter device id',
     unique: true,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: 'Device must be associated with a user',
   },
   model: {
     type: String,

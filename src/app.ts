@@ -7,9 +7,13 @@ import './models/device.model';
 import wsServer from './wsServer';
 import apiRoutes from './routes/api.routes';
 import sonoffRoutes from './routes/sonoff.routes';
+import passport from 'passport';
+import passportConfig from './config/passport';
 
 // Load environment variables from .env file into process.env
 dotenv.config();
+
+passportConfig(); // run passport config
 
 const app = express();
 mongoose.Promise = global.Promise; // use the global Promise for mongoose
@@ -18,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI);
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
 
 apiRoutes(app);
 sonoffRoutes(app);
