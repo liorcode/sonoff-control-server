@@ -1,4 +1,5 @@
 import app from './app';
+import wsServer from './wsServer';
 import https from 'https';
 import fs from 'fs';
 import logger from 'winston';
@@ -87,3 +88,6 @@ function onListening() {
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+// Start the WS server as well
+wsServer(app);

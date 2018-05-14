@@ -4,7 +4,6 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import './models/device.model';
-import wsServer from './wsServer';
 import apiRoutes from './routes/api.routes';
 import sonoffRoutes from './routes/sonoff.routes';
 import passport from 'passport';
@@ -27,7 +26,6 @@ app.use(passport.initialize());
 
 apiRoutes(app);
 sonoffRoutes(app);
-wsServer(app);
 
 // catch 404 and forward to error handler
 app.use((req: Request, res: Response, next: NextFunction) => {
