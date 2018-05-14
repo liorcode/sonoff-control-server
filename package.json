@@ -7,7 +7,8 @@
     "serve": "nodemon ./dist/server",
     "build": "tsc",
     "lint": "tslint --project .",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "test": "jest"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -28,16 +29,22 @@
   "devDependencies": {
     "@types/dotenv": "^4.0.3",
     "@types/express": "^4.11.1",
+    "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.107",
     "@types/mongodb": "^3.0.15",
     "@types/mongoose": "^5.0.10",
     "@types/morgan": "^1.7.35",
     "@types/passport": "^0.4.5",
     "@types/passport-strategy": "^0.2.33",
+    "@types/supertest": "^2.0.4",
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.9",
     "@types/ws": "^4.0.2",
+    "jest": "^22.4.3",
+    "jest-extended": "^0.7.1",
     "nodemon": "^1.14.11",
+    "supertest": "^3.1.0",
+    "ts-jest": "^22.4.6",
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.3"
