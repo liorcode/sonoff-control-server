@@ -9,6 +9,7 @@ import apiRoutes from './routes/api.routes';
 import sonoffRoutes from './routes/sonoff.routes';
 import passport from 'passport';
 import passportConfig from './config/passport';
+import ServerError from './lib/ServerError';
 
 // Load environment variables from .env file into process.env
 dotenv.config();
@@ -33,8 +34,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next(new ServerError('Not Found', 404, req.originalUrl));
 });
 
-// error handler
-app.use((err: ServerError, req: Request, res: Response) => {
+// error handler. Must expect 4 args to work
+app.use((err: ServerError, req: Request, res: Response, next: NextFunction) => {
   res.status(err.status || 500);
   res.json({
     message: err.message,

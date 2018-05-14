@@ -3,3 +3,5 @@ class ServerError extends Error {
     super(message);
   }
 }
+
+export default ServerError;
