@@ -6,17 +6,16 @@ import User, { IUserModel } from './user.model';
 export interface IDeviceState {
   switch: 'on' | 'off';
   startup: 'on' | 'off' | 'keep';
-  rssi: string;
+  rssi: string; // WiFi signal
   timers: mongooseTypes.DocumentArray<ITimerModel>;
 }
 
 export interface IDeviceParams {
   user: IUserModel;
-  id: string;
-  model: string;
-  manufacturerName: string;
-  version: string;
-  name: string;
+  id: string; // Device id
+  model: string; // Device model
+  version: string; // ROM version
+  name: string; // Device nickname
   state: IDeviceState;
 }
 
@@ -39,9 +38,6 @@ const DeviceSchema = new Schema({
     ref: 'User',
   },
   model: {
-    type: String,
-  },
-  manufacturerName: {
     type: String,
   },
   version: {
