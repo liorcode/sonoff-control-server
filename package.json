@@ -3,12 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "concurrently -k \"npm run build && npm run serve-watch\" \"npm run watch\"",
+    "build": "tsc",
+    "build-watch": "tsc -w",
+    "lint": "tslint --project .",
     "serve": "node ./dist/server",
     "serve-watch": "nodemon ./dist/server",
-    "build": "tsc",
-    "lint": "tslint --project .",
-    "watch": "tsc -w",
+    "start": "concurrently -k \"npm run build && npm run serve-watch\" \"npm run build-watch\"",
     "test": "jest"
   },
   "dependencies": {
