@@ -2,22 +2,19 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import './models/device.model';
 import apiRoutes from './routes/api.routes';
 import sonoffRoutes from './routes/sonoff.routes';
 import passport from 'passport';
 import passportConfig from './config/passport';
+import conf from './config/config';
 import ServerError from './lib/ServerError';
-
-// Load environment variables from .env file into process.env
-dotenv.config();
 
 passportConfig(); // run passport config
 
 const app = express();
 mongoose.Promise = global.Promise; // use the global Promise for mongoose
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(conf.MONGO_URI);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());

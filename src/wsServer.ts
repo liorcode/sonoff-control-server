@@ -5,14 +5,11 @@ import url from 'url';
 import logger from 'winston';
 import SonoffRequestHandler from './controllers/sonoff.controller';
 import { Express } from 'express';
-import dotenv from 'dotenv';
-
-// Load environment variables from .env file into process.env
-dotenv.config();
+import conf from './config/config';
 
 const opts = {
-  key: fs.readFileSync(`./certs/${process.env.SSL_KEY_FILE}`),
-  cert: fs.readFileSync(`./certs/${process.env.SSL_CERT_FILE}`),
+  key: fs.readFileSync(`./certs/${conf.SSL_KEY_FILE}`),
+  cert: fs.readFileSync(`./certs/${conf.SSL_CERT_FILE}`),
 };
 export default (app: Express) => {
   const server = https.createServer(opts, app);
@@ -37,7 +34,7 @@ export default (app: Express) => {
     });
   });
 
-  server.listen(process.env.WEBSOCKET_PORT, () => {
+  server.listen(conf.WEBSOCKET_PORT, () => {
     logger.info('WS | Listening on %d', server.address().port);
   });
 };

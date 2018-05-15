@@ -1,5 +1,6 @@
 import logger from 'winston';
 import { Express } from 'express';
+import conf from '../config/config';
 
 export default (app: Express) => {
   /** Request example:
@@ -18,8 +19,8 @@ export default (app: Express) => {
       res.json({
         error: 0,
         reason: 'ok',
-        IP: process.env.SERVER_IP,
-        port: process.env.WEBSOCKET_PORT,
+        IP: conf.SERVER_IP,
+        port: conf.WEBSOCKET_PORT,
       });
     });
 };
