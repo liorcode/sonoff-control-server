@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "concurrently -k \"npm run serve\" \"npm run watch\"",
+    "start": "concurrently -k \"npm run build && npm run serve\" \"npm run watch\"",
     "serve": "nodemon ./dist/server",
     "build": "tsc",
     "lint": "tslint --project .",
