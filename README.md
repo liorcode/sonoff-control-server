@@ -1,10 +1,47 @@
 # Sonoff control server
 
-Used as a replacement server for sonoff devices server. Based on [https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01](this blog post).
+Used as a replacement server for sonoff devices.  
+It exports a REST server to control and manage devices, as well as a WebSocket server to communicate with the device.
+   
+Based on [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01) and inspired by [simple-sonoff-server](https://github.com/mdopp/simple-sonoff-server).
 
-##### Note
-Works only on old sonoff firmwares (below 1.6), with no SSL certifications validation. See https://github.com/mirko/SonOTA/issues/58.
+This project is written in TypeScript and uses [Express framework](https://expressjs.com/). The database server is [MongoDB](https://www.mongodb.com/).
+##### Attention
+Currently this only works on old sonoff firmwares (below 1.6), with no SSL certifications validation. See https://github.com/mirko/SonOTA/issues/58.
 
+
+# Configuration
+Configuration is done using a [dotenv](https://github.com/motdotla/dotenv) file.   
+
+To start, copy the `.env.example` file to `.env` and change the values to match your server configuration. Note that `SERVER_IP` is sent to the device as it, so it must be accessible by it.
+
+Next, as the device requires an SSL connection, you will need to generate a self-signed SSL certificate.  
+Place the generated key and certificate in the "certs" directory and add them to the `.env` configuration file.
+
+# install and run
+
+Requirements:
+  * [Node.js](https://nodejs.org)
+  * [MongoDB](https://www.mongodb.com/)
+
+```
+# using npm:
+npm install 
+npm run build
+npm run serve
+
+# using yarn:
+yarn 
+yarn build
+yarn serve
+```
+
+This will compile the project and start the API and the WebSocket server on the configured ports.  
+
+See [Available Commands](#available-commands) for more running options.
+
+# Pairing
+See the pairing section under [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01) or use the setup script from [simple-sonoff-server](https://github.com/mdopp/simple-sonoff-server).
 
 # API
 
