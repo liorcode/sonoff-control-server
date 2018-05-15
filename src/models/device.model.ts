@@ -37,7 +37,6 @@ const DeviceSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: 'Device must be associated with a user',
   },
   model: {
     type: String,

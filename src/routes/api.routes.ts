@@ -2,14 +2,17 @@ import deviceController from '../controllers/devices.controller';
 import timersController from '../controllers/timers.controller';
 import { Express } from 'express';
 import passport from 'passport';
+import conf from '../config/config';
 
 /**
  * API routes for CRUD operations on the device
  * @param {object} app - express application
  */
 export default (app: Express) => {
-  // All routes under 'devices' must check for valid logged in Google user
-  app.use('/devices', passport.authenticate('google-verify-token', { session: false }));
+  if (conf.REQUIRE_LOGIN) {
+    // All routes under 'devices' must check for valid logged in Google user
+    app.use('/devices', passport.authenticate('google-verify-token', { session: false }));
+  }
 
   app.route('/devices')
     .get(deviceController.list)
