@@ -2,6 +2,8 @@
 
 Used as a replacement server for sonoff devices.  
 It exports a REST server to control and manage devices, as well as a WebSocket server to communicate with the device.
+It supports an optional user authentication, using _Google Sign-In_ so only authenticated users will be able to
+control their devices.
    
 Based on [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01) and inspired by [simple-sonoff-server](https://github.com/mdopp/simple-sonoff-server).
 
@@ -13,12 +15,18 @@ Currently this only works on old sonoff firmwares (below 1.6), with no SSL certi
 # Configuration
 Configuration is done using a [dotenv](https://github.com/motdotla/dotenv) file.   
 
-To start, copy the `.env.example` file to `.env` and change the values to match your server configuration. Note that `SERVER_IP` is sent to the device as it, so it must be accessible by it.
+To start, copy the `.env.example` file to `.env` and change the values to match your server configuration. Note that `SERVER_IP` is sent to the device as it, so it must be accessible by it.  
+
+## Multi user configuration
+For multi user support, set `MULTI_USER` to true. It would mean that a valid Google SSO Bearer token must be sent with each request.
+You will also need to create a Google app client id, and set it to `GOOGLE_CLIENT_ID`.
+
+[Read More](#user-authentication).
 
 Next, as the device requires an SSL connection, you will need to generate a self-signed SSL certificate.  
 Place the generated key and certificate in the "certs" directory and add them to the `.env` configuration file.
 
-# install and run
+# installing and running
 
 Requirements:
   * [Node.js](https://nodejs.org)
@@ -44,6 +52,18 @@ See [Available Commands](#available-commands) for more running options.
 See the pairing section under [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01) or use the setup script from [simple-sonoff-server](https://github.com/mdopp/simple-sonoff-server).
 
 # API
+
+### User authentication
+
+If `MULTI_USER` is set to true in your '.env' file, a Google Sign-in Bearer token must be sent along with your requests.
+See [Google Sign-In](https://developers.google.com/identity/) to learn how to generate a token and a Google app Client id.  
+
+Once you have generated a token, send the `id_token` to the server as an Authorization header with each request.   
+The header should look like: `Authorization: Bearer ID_TOKEN_HERE`.   
+
+Now, all the devices you add will be related to your user (by google id), and only you could view and control them. 
+
+Note that you might have to occasionally generate a new token, as it has a limited expiry time.
 
 ### Devices
 

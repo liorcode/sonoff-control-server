@@ -9,7 +9,7 @@ import conf from '../config/config';
  * @param {object} app - express application
  */
 export default (app: Express) => {
-  if (conf.REQUIRE_LOGIN) {
+  if (conf.MULTI_USER) {
     // All routes under 'devices' must check for valid logged in Google user
     app.use('/devices', passport.authenticate('google-verify-token', { session: false }));
   }

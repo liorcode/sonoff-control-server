@@ -8,7 +8,7 @@ const toNumber = (str: string): number => parseInt(str, 10);
 export default {
   GOOGLE_CLIENT_ID: <string> env.GOOGLE_CLIENT_ID,
   MONGO_URI: <string> env.MONGO_URI,
-  REQUIRE_LOGIN: <boolean> toBoolean(env.REQUIRE_LOGIN),
+  MULTI_USER: <boolean> toBoolean(env.MULTI_USER),
   SERVER_IP: <string> env.SERVER_IP,
   SERVER_API_PORT: <number> toNumber(env.SERVER_API_PORT),
   SSL_KEY_FILE: <string> env.SSL_KEY_FILE,
