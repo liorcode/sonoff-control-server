@@ -37,6 +37,8 @@
     "@types/morgan": "^1.7.35",
     "@types/passport": "^0.4.5",
     "@types/passport-strategy": "^0.2.33",
+    "@types/request": "^2.47.0",
+    "@types/request-promise-native": "^1.0.14",
     "@types/supertest": "^2.0.4",
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.9",
@@ -44,10 +46,14 @@
     "jest": "^22.4.3",
     "jest-extended": "^0.7.1",
     "nodemon": "^1.14.11",
+    "request": "^2.86.0",
+    "request-promise-native": "^1.0.5",
     "supertest": "^3.1.0",
     "ts-jest": "^22.4.6",
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.8.3",
+    "wifi-control": "^2.0.1",
+    "yargs": "^11.0.0"
   }
 }

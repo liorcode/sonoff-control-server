@@ -49,7 +49,16 @@ This will compile the project and start the API and the WebSocket server on the 
 See [Available Commands](#available-commands) for more running options.
 
 # Pairing
-See the pairing section under [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01) or use the setup script from [simple-sonoff-server](https://github.com/mdopp/simple-sonoff-server).
+
+This step must happen after the [config](#configuration) and [install](#installing-and-running) steps.
+
+1. Set device in pairing mode by long-pressing the button in your sonoff device.
+2. Run the pairing script: `node pair-device.cli --ssid YOUR_SSID --password --YOUR_WIFI_PASSWORD`
+3. Your device will now connect to your WiFi network and your server (it will automatically retry if server is down)
+
+If you are having trouble, try the manual pairing method explained in [this blog post](https://blog.ipsumdomus.com/sonoff-switch-complete-hack-without-firmware-upgrade-1b2d6632c01).  
+
+Note that in [Multi User mode](#multi-user-mode), you will have to add add the device before it will be able to connect to your server. You can do that by a POST request to /devices, with the device id you found in the pairing process. See [Register new device](#register-new-device).
 
 # API
 
