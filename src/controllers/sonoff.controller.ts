@@ -3,6 +3,7 @@ import { model } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import DeviceSocket from '../lib/deviceSocket';
 import { IDeviceModel } from '../models/device.model';
+import config from '../config/config';
 import WebSocket = require('ws');
 
 const Device = model('Devices');
@@ -128,9 +129,20 @@ class SonoffRequestHandler {
    * @param {SonoffRequest} req
    */
   handleRegister(req: SonoffRequest) {
-    Device.findOne({ id: req.deviceid }, (err, device: IDeviceModel) => {
-      if (device === null) { // device must be registered through api first
-        throw new Error('Cannot register device: it does not exist.');
+    Device.findOne({ id: req.deviceid }, (err, foundDevice: IDeviceModel) => {
+      let device = foundDevice;
+
+      if (foundDevice === null) { // trying to register non existing device
+        if (config.MULTI_USER) { // multi user mode
+          throw new Error(
+            'Cannot register non existing device in Multi User mode. Add the device using the API first.',
+          );
+        }
+
+        // Single user mode. create the non-existing device automatically
+        device = <IDeviceModel>new Device({
+          name: req.deviceid, // Default name: same as device id
+        });
       }
 
       device.model = req.model;
