@@ -1,6 +1,6 @@
 import request from 'supertest';
 import 'jest-extended';
-import app from '../src/app';
+import app from '../../src/app';
 
 describe('GET /devices', () => {
   it('should return 200', async () => {
