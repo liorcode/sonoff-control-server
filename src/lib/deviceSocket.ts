@@ -6,7 +6,7 @@ import { ITimerParams } from '../models/timer.schema';
 interface IDeviceMessage {
   switch?: 'on' | 'off';
   startup?: 'on' | 'off' | 'keep';
-  rssi?: string;
+  rssi?: number;
   timers?: ITimerParams[] | 0;
 }
 

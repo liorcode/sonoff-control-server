@@ -6,12 +6,12 @@ import User, { IUserModel } from './user.model';
 export interface IDeviceState {
   switch: 'on' | 'off';
   startup: 'on' | 'off' | 'keep';
-  rssi: string; // WiFi signal
+  rssi: number; // WiFi signal
   timers: mongooseTypes.DocumentArray<ITimerModel>;
 }
 
 export interface IDeviceParams {
-  user: IUserModel;
+  user?: IUserModel;
   id: string; // Device id
   model: string; // Device model
   version: string; // ROM version
