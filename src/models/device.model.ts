@@ -81,7 +81,7 @@ DeviceSchema.methods.getConnection = function (): DeviceSocket {
 
 DeviceSchema.methods.isOnline = function (): boolean {
   const connection = socketInstances.get(this.id);
-  return connection && connection.isConnectionAlive();
+  return !!connection && connection.isConnectionAlive();
 };
 
 
