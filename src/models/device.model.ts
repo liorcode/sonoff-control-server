@@ -5,9 +5,9 @@ import User, { IUserModel } from './user.model';
 
 export interface IDeviceState {
   switch: 'on' | 'off';
-  startup: 'on' | 'off' | 'keep';
-  rssi: number; // WiFi signal
-  timers: mongooseTypes.DocumentArray<ITimerModel>;
+  startup?: 'on' | 'off' | 'keep';
+  rssi?: number; // WiFi signal
+  timers?: mongooseTypes.DocumentArray<ITimerModel>;
 }
 
 export interface IDeviceParams {
