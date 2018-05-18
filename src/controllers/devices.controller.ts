@@ -51,7 +51,7 @@ class DevicesController {
    * @param {NextFunction} next - next middleware
    */
   static getDevice(req: Request, response: Response, next: NextFunction): void {
-    Device.findOne({ _id: req.params.deviceId, user: req.user }, (err, device) => {
+    Device.findOne({ id: req.params.deviceId, user: req.user }, (err, device) => {
       if (err) {
         return next(err);
       }
