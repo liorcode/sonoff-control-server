@@ -2,8 +2,8 @@ import dotenv from 'dotenv';
 // Parse dotenv variables. Note: this will also go to process.env
 const { parsed: env } = dotenv.config();
 
-const toBoolean = (str: string): boolean => JSON.parse(str);
-const toNumber = (str: string): number => parseInt(str, 10);
+const toBoolean = (str: string): boolean => str !== undefined ? JSON.parse(str) : false;
+const toNumber = (str: string): number => str !== undefined ? parseInt(str, 10) : 0;
 
 export default {
   GOOGLE_CLIENT_ID: <string> env.GOOGLE_CLIENT_ID,
