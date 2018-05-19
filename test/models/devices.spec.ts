@@ -26,17 +26,23 @@ describe('Devices model', () => {
 
   it('checks connection isOnline', () => {
     deviceModel.setConnection(connection);
-    expect(deviceModel.isOnline()).toBeTrue();
+    expect(deviceModel.isOnline).toBeTrue();
 
     ws.readyState = WebSocket.CLOSED;
-    expect(deviceModel.isOnline()).toBeFalse();
+    expect(deviceModel.isOnline).toBeFalse();
+  });
+
+  it('includes isOnline when serializing to json', () => {
+    const deviceModelJSON = deviceModel.toJSON();
+
+    expect(deviceModelJSON.isOnline).toBeFalse();
   });
 
   it('removes connection', () => {
     deviceModel.setConnection(connection);
-    expect(deviceModel.isOnline()).toBeTrue();
+    expect(deviceModel.isOnline).toBeTrue();
     deviceModel.removeConnection();
-    expect(deviceModel.isOnline()).toBeFalse();
+    expect(deviceModel.isOnline).toBeFalse();
     expect(deviceModel.getConnection()).toBeUndefined();
   });
 });

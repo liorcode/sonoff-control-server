@@ -71,6 +71,8 @@ const DeviceSchema = new Schema({
       delete ret._id;
       delete ret.__v;
     },
+    // include virtuals, so we could get the 'isOnline' prop
+    virtuals: true,
   },
 });
 
@@ -79,10 +81,10 @@ DeviceSchema.methods.getConnection = function (): DeviceSocket {
   return socketInstances.get(this.id);
 };
 
-DeviceSchema.methods.isOnline = function (): boolean {
+DeviceSchema.virtual('isOnline').get(function () {
   const connection = socketInstances.get(this.id);
   return !!connection && connection.isConnectionAlive();
-};
+});
 
 
 DeviceSchema.methods.setConnection = function (connection: DeviceSocket): Map<String, DeviceSocket> {
