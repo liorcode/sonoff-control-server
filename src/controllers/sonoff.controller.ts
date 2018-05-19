@@ -1,12 +1,9 @@
 import logger from 'winston';
-import { model } from 'mongoose';
 import { v4 as uuid } from 'uuid';
+import WebSocket from 'ws';
 import DeviceSocket from '../lib/deviceSocket';
-import { IDeviceModel } from '../models/device.model';
+import Device, { IDeviceModel } from '../models/device.model';
 import config from '../config/config';
-import WebSocket = require('ws');
-
-const Device = model('Devices');
 
 type SonoffRequest = {
   [key: string]: any;
@@ -133,16 +130,7 @@ class SonoffRequestHandler {
       let device = foundDevice;
 
       if (foundDevice === null) { // trying to register non existing device
-        if (config.MULTI_USER) { // multi user mode
-          throw new Error(
-            'Cannot register non existing device in Multi User mode. Add the device using the API first.',
-          );
-        }
-
-        // Single user mode. create the non-existing device automatically
-        device = <IDeviceModel>new Device({
-          name: req.deviceid, // Default name: same as device id
-        });
+        device = this.onRegisterNonExistingDevice(req);
       }
 
       device.model = req.model;
@@ -158,6 +146,25 @@ class SonoffRequestHandler {
         logger.error(saveErr);
         this.respondError();
       });
+    });
+  }
+
+  /**
+   * Called by handleRegister when device is not found.
+   * Either creates the device (single user mode) or throws an error (multi user mode)
+   * @param {SonoffRequest} req
+   * @returns {IDeviceModel}
+   */
+  onRegisterNonExistingDevice(req: SonoffRequest) {
+    if (config.MULTI_USER) { // multi user mode
+      throw new Error(
+        'Cannot register non existing device in Multi User mode. Add the device using the API first.',
+      );
+    }
+
+    // Single user mode. create the non-existing device automatically
+    return <IDeviceModel>new Device({
+      name: req.deviceid, // Default name: same as device id
     });
   }
 
@@ -178,10 +185,11 @@ class SonoffRequestHandler {
     this.respond({ error: 1 });
   }
 
+  /**
+   * Called when the device connection is closed
+   */
   onClose() {
-    if (this.device) {
-      this.device.set('status', 'offline');
-    }
+    this.device.removeConnection();
   }
 }
 
