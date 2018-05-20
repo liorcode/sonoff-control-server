@@ -44,12 +44,13 @@ function getDeviceInfo() {
  */
 function setDeviceConf() {
   return rp.post('http://10.10.7.1/ap', {
-    json: {
+    json: true,
+    body: {
       version: 4,
       ssid: wifiSSID,
       password: wifiPassword,
       serverName: process.env.SERVER_IP,
-      port: process.env.SERVER_API_PORT,
+      port: parseInt(process.env.SERVER_API_PORT, 10),
     },
   });
 }
@@ -112,7 +113,7 @@ const intervalId = setInterval(() => {
     }
   });
 
-  if (!result.success) { // Scan error. stop polling
+  if (result && !result.success) { // Scan error. stop polling
     clearInterval(intervalId);
   }
 }, 1000);
