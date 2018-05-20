@@ -1,5 +1,6 @@
 import deviceController from '../controllers/devices.controller';
 import timersController from '../controllers/timers.controller';
+import usersController from '../controllers/users.controller';
 import { Express } from 'express';
 import passport from 'passport';
 import conf from '../config/config';
@@ -10,8 +11,14 @@ import conf from '../config/config';
  */
 export default (app: Express) => {
   if (conf.MULTI_USER) {
-    // All routes under 'devices' must check for valid logged in Google user
-    app.use('/devices', passport.authenticate('google-verify-token', { session: false }));
+    const auth = passport.authenticate('google-verify-token', { session: false });
+    // All routes under 'devices' and 'users' must check for valid logged in Google user
+    app.use('/devices', auth);
+    app.use('/users', auth);
+
+    // this route only exists in multi user mode
+    app.route('/users/me')
+      .get(usersController.getLoggedInUser);
   }
 
   app.route('/devices')

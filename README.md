@@ -85,6 +85,9 @@ The header should look like: `Authorization: Bearer ID_TOKEN_HERE`.
 
 Note that you might have to occasionally generate a new token, as it has a limited expiry time.
 
+To verify you are using a valid token, you can make a GET request to `/users/me`.
+The server should reply with your Google ID and email.
+
 ### Devices
 
 `GET /devices` - List all the devices  
