@@ -88,7 +88,7 @@ class DevicesController {
         return DevicesController.onDeviceUpdated(device, params)
           .then(() => {
             response.json(device);
-          });
+          }).catch(next);
       },
     );
   }
@@ -101,7 +101,7 @@ class DevicesController {
    * @param {object} device - The device model
    * @param {object} params - Changed device parameters
    * @returns {Promise} - If state params were updated, resolved only when the device
-   *    has synced succesfully.
+   *    has synced successfully.
    *    Otherwise: resolved immediately.
    */
   static onDeviceUpdated(device: IDeviceModel, params: Partial<IDeviceParams>): Promise<void> {
@@ -109,8 +109,8 @@ class DevicesController {
       return Promise.resolve();
     }
 
-    if (!device.isOnline()) {
-      throw new Error('Cannot sync device: device is offline');
+    if (!device.isOnline) {
+      return Promise.reject(new Error('Device attributes updated, but not synced: device is offline'));
     }
     return device.getConnection()
       .syncState(params.state);

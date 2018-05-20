@@ -157,8 +157,8 @@ class TimersController {
    * @returns {Promise} - resolves when the device has synced successfully
    */
   static onTimerUpdated(device: IDeviceModel) {
-    if (!device.isOnline()) {
-      throw new Error('Cannot sync device: device is offline');
+    if (!device.isOnline) {
+      return Promise.reject(new Error('Cannot sync device: device is offline'));
     }
     return device.getConnection()
       .syncState({ timers: device.state.timers });

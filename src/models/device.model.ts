@@ -21,7 +21,7 @@ export interface IDeviceParams {
 
 export type IDeviceModel = Document & IDeviceParams & {
   getConnection (): DeviceSocket,
-  isOnline(): boolean,
+  isOnline: boolean,
   setConnection(connection: DeviceSocket): Map<String, DeviceSocket>,
   removeConnection(): boolean,
 };
