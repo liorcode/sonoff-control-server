@@ -34,6 +34,8 @@ openssl req -x509  -nodes -newkey rsa:4096 -keyout server.key -out server.cert -
 ```
 Add the file paths to the `.env` configuration file.  
 
+Alternatively, if you don't need node to run on HTTPS (e.g: you are using a proxy or a load balancer for HTTPS instead), you can change the scheme to HTTP by modifying the `SERVER_SCHEME` value. 
+
 # installing and running
 
 Requirements:
@@ -227,9 +229,9 @@ Any of the following commands can run by `npm run` or `yarn`.
 
 `build` - Compile typescript source to JS and output to "dist" directory  
 `build-watch` - Compile source and rebuild on changes
-`dev` -  Compiles project and start server, in watch mode    
 `lint` - Lint the code using [TSLint](https://github.com/palantir/tslint)  
 `serve` - Start server  
 `serve-watch` - Start server and watch for any changes in 'dist' directory  
 `start` -  Builds the project, then serves it (build+serve scripts)   
-`test` - Run tests using jest
+`test` - Run tests using jest  
+`watch` -  Compiles project and start server, in watch mode    
