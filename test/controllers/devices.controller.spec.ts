@@ -64,7 +64,7 @@ describe('Devices controller', () => {
   });
 
   it('updates allowed device attributes', () => {
-    const device = { ... DeviceParams, isOnline: jest.fn() };
+    const device = { ... DeviceParams, isOnline: true };
     const update = {
       name: 'hall',
       model: 'abc',
@@ -95,7 +95,7 @@ describe('Devices controller', () => {
 
   describe('onDeviceUpdated', () => {
     it('resolves if no state was updated', () => {
-      const device = { ... DeviceParams, isOnline: jest.fn() };
+      const device = { ... DeviceParams, isOnline: true };
       const update = {
         name: 'hall',
         model: 'abc',
@@ -108,11 +108,9 @@ describe('Devices controller', () => {
       const syncSpy = jest.fn().mockResolvedValue(undefined);
       const device = {
         ... DeviceParams,
-        isOnline: jest.fn(),
+        isOnline: true,
         getConnection: () => ({ syncState: syncSpy }),
       };
-
-      device.isOnline.mockReturnValue(true);
 
       return DevicesController.onDeviceUpdated(<any>device, { state: { switch: 'on' } })
         .then(() => {
@@ -120,18 +118,18 @@ describe('Devices controller', () => {
         });
     });
 
-    it('throws error if device is offline', () => {
+    it('rejects promise if device is offline', () => {
       const syncSpy = jest.fn().mockResolvedValue(undefined);
       const device = {
         ... DeviceParams,
-        isOnline: jest.fn(),
+        isOnline: false,
         getConnection: () => ({ syncState: syncSpy }),
       };
 
-      device.isOnline.mockReturnValue(false);
-
-      const fn = () => DevicesController.onDeviceUpdated(<any>device, { state: { switch: 'on' } });
-      expect(fn).toThrowError();
+      const promise = DevicesController.onDeviceUpdated(<any>device, { state: { switch: 'on' } })
+        .catch((err) => {
+          expect(err).toBeInstanceOf(Error);
+        });
     });
   });
 
