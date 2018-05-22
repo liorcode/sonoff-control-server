@@ -226,9 +226,10 @@ Used solely by the Sonoff device.
 Any of the following commands can run by `npm run` or `yarn`.
 
 `build` - Compile typescript source to JS and output to "dist" directory  
-`build-watch` - Compile source and rebuild on changes  
+`build-watch` - Compile source and rebuild on changes
+`dev` -  Compiles project and start server, in watch mode    
 `lint` - Lint the code using [TSLint](https://github.com/palantir/tslint)  
 `serve` - Start server  
 `serve-watch` - Start server and watch for any changes in 'dist' directory  
-`start` -  Compiles project and start server, in watch mode  
+`start` -  Builds the project, then serves it (build+serve scripts)   
 `test` - Run tests using jest

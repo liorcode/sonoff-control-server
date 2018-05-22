@@ -8,7 +8,8 @@
     "lint": "tslint --project .",
     "serve": "node ./dist/server",
     "serve-watch": "nodemon ./dist/server",
-    "start": "concurrently -k \"npm run build && npm run serve-watch\" \"npm run build-watch\"",
+    "start": "npm run build && npm run serve",
+    "watch": "concurrently -k \"npm run build && npm run serve-watch\" \"npm run build-watch\"",
     "test": "jest"
   },
   "dependencies": {
