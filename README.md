@@ -16,8 +16,7 @@ Currently this only works on old sonoff firmwares (below 1.6), with no SSL certi
 Configuration is done using a [dotenv](https://github.com/motdotla/dotenv) file.   
 
 To start, copy the `.env.example` file to `.env` and change the values to match your server configuration. 
-Note that `SERVER_IP` is sent to the device as-is, so it must be accessible by it.  
-Also make sure to set the correct MongoDB URI.
+
 
 #### Multi user mode
 For multi user support, set `MULTI_USER` to true. It would mean that a valid Google SSO Bearer token must be sent with each request.

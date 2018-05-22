@@ -7,7 +7,7 @@ import logger from 'winston';
 import ErrnoException = NodeJS.ErrnoException;
 import conf from './config/config';
 
-const port = conf.SERVER_API_PORT;
+const port = conf.API_PORT;
 // Store in express
 app.set('port', port);
 

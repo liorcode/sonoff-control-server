@@ -15,11 +15,15 @@ export default (app: Express) => {
    */
   app.route('/dispatch/device')
     .post((req, res) => {
-      logger.info('Sonoff is requesting websocket info', req.body);
+      logger.info('Sonoff is requesting websocket info', req.body, 'replying', {
+        IP: conf.WEBSOCKET_HOST,
+        port: conf.WEBSOCKET_PORT,
+      });
+
       res.json({
         error: 0,
         reason: 'ok',
-        IP: conf.SERVER_IP,
+        IP: conf.WEBSOCKET_HOST,
         port: conf.WEBSOCKET_PORT,
       });
     });
