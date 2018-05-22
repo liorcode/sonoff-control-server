@@ -27,12 +27,12 @@ You will also need to create a Google app client id, and set it to `GOOGLE_CLIEN
 
 ### SSL Certificate
 
-Next, as the device requires an SSL connection, you will need to generate a self-signed SSL certificate.  
-You can do it easily using openssl. For example, this will generate a key for 1 year, with no passphrase protection.
+Next, as the device requires an SSL connection, you will need to generate an SSL certificate.  
+You can generate a self-signed one easily using openssl. For example, this will generate a key for 1 year, with no passphrase protection:
 ```
 openssl req -x509  -nodes -newkey rsa:4096 -keyout server.key -out server.cert -days 365
 ```
-Place the generated key and certificate in the "certs" directory and add them to the `.env` configuration file.  
+Add the file paths to the `.env` configuration file.  
 
 # installing and running
 

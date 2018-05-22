@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import url from 'url';
 import logger from 'winston';
@@ -7,12 +8,14 @@ import SonoffRequestHandler from './controllers/sonoff.controller';
 import { Express } from 'express';
 import conf from './config/config';
 
-const opts = {
-  key: fs.readFileSync(`./certs/${conf.SSL_KEY_FILE}`),
-  cert: fs.readFileSync(`./certs/${conf.SSL_CERT_FILE}`),
-};
 export default (app: Express) => {
-  const server = https.createServer(opts, app);
+  /**
+   * Create HTTP or HTTPS server, based on config
+   */
+  const server = conf.SERVER_SCHEME === 'https' ? https.createServer({
+    key: fs.readFileSync(conf.SSL_KEY_FILE),
+    cert: fs.readFileSync(conf.SSL_CERT_FILE),
+  }, app) : http.createServer(app);
   const wss = new WebSocket.Server({ server });
   wss.on('connection', (conn: WebSocket, req) => {
     logger.info('WS | Incoming connection');
@@ -35,6 +38,6 @@ export default (app: Express) => {
   });
 
   server.listen(conf.WEBSOCKET_PORT, () => {
-    logger.info('WS | Listening on %d', server.address().port);
+    logger.info('WS | Listening on %d (%s)', server.address().port, conf.SERVER_SCHEME);
   });
 };

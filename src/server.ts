@@ -1,6 +1,7 @@
 import app from './app';
 import wsServer from './wsServer';
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import logger from 'winston';
 import ErrnoException = NodeJS.ErrnoException;
@@ -11,13 +12,12 @@ const port = conf.SERVER_API_PORT;
 app.set('port', port);
 
 /**
- * Create HTTPS server.
+ * Create HTTP or HTTPS server, based on config
  */
-const opts = {
-  key: fs.readFileSync(`./certs/${conf.SSL_KEY_FILE}`),
-  cert: fs.readFileSync(`./certs/${conf.SSL_CERT_FILE}`),
-};
-const server = https.createServer(opts, app);
+const server = conf.SERVER_SCHEME === 'https' ? https.createServer({
+  key: fs.readFileSync(conf.SSL_KEY_FILE),
+  cert: fs.readFileSync(conf.SSL_CERT_FILE),
+}, app) : http.createServer(app);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -49,7 +49,7 @@ function onError(error: ErrnoException) {
 
 function onListening() {
   const addr = server.address();
-  logger.info(`API Listening on port ${addr.port}`);
+  logger.info(`API | Listening on ${addr.port} (${conf.SERVER_SCHEME})`);
 }
 
 /**
