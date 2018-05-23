@@ -8,6 +8,16 @@ export type IUserModel = mongoose.Document & {
 const userSchema = new mongoose.Schema({
   email: String,
   googleId: String,
-}, { timestamps: true });
+},{
+  toJSON: {
+    /**
+     * Clean mongoose attributes from returned objects
+     */
+    transform(doc, ret) {
+      delete ret._id;
+      delete ret.__v;
+    },
+  },
+});
 
 export default mongoose.model('User', userSchema);
