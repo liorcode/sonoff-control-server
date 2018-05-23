@@ -10,6 +10,9 @@ import conf from '../config/config';
  * @param {object} app - express application
  */
 export default (app: Express) => {
+  app.route('/')
+    .get(((req, res) => res.json({ message: 'ok' })));
+
   if (conf.MULTI_USER) {
     const auth = passport.authenticate('google-verify-token', { session: false });
     // All routes under 'devices' and 'users' must check for valid logged in Google user
