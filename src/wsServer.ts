@@ -37,7 +37,7 @@ export default (app: Express) => {
     });
   });
 
-  server.listen(conf.WEBSOCKET_PORT, () => {
-    logger.info('WS | Listening on %d (%s)', server.address().port, conf.SERVER_SCHEME);
+  server.listen(conf.WEBSOCKET_PORT, conf.WEBSOCKET_HOST, () => {
+    logger.info(`WS | Listening on ${conf.WEBSOCKET_HOST}:${conf.WEBSOCKET_PORT} (${conf.SERVER_SCHEME})`);
   });
 };

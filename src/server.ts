@@ -49,14 +49,14 @@ function onError(error: ErrnoException) {
 
 function onListening() {
   const addr = server.address();
-  logger.info(`API | Listening on ${addr.port} (${conf.SERVER_SCHEME})`);
+  logger.info(`API | Listening on ${conf.API_HOST}:${addr.port} (${conf.SERVER_SCHEME})`);
 }
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, conf.API_HOST);
 server.on('error', onError);
 server.on('listening', onListening);
 
