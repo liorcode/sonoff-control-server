@@ -43,23 +43,19 @@ function getDeviceInfo() {
  * @return {Promise} - resolves to the device's response
  */
 function setDeviceConf() {
-
-  logger.info('Sending info to device', JSON.stringify({
+  const msg = {
+    version: 4,
     ssid: wifiSSID,
     password: wifiPassword,
-    serverName: process.env.API_HOST,
-    port: parseInt(process.env.API_PORT, 10),
-  }));
+    serverName: process.env.API_EXTERNAL_HOST,
+    port: parseInt(process.env.API_EXTERNAL_PORT, 10),
+  };
+
+  logger.info('Sending info to device', JSON.stringify(msg));
 
   return rp.post('http://10.10.7.1/ap', {
     json: true,
-    body: {
-      version: 4,
-      ssid: wifiSSID,
-      password: wifiPassword,
-      serverName: process.env.API_EXTERNAL_HOST,
-      port: parseInt(process.env.API_EXTERNAL_PORT, 10),
-    },
+    body: msg,
   });
 }
 
