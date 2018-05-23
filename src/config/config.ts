@@ -16,4 +16,5 @@ export default {
   SERVER_SCHEME: <'http' | 'https'>(process.env.SERVER_SCHEME),
   SSL_KEY_FILE: <string> process.env.SSL_KEY_FILE,
   SSL_CERT_FILE: <string> process.env.SSL_CERT_FILE,
+  LOG_LEVEL: <string> process.env.LOG_LEVEL,
 };

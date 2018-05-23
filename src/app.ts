@@ -9,6 +9,7 @@ import passport from 'passport';
 import passportConfig from './config/passport';
 import conf from './config/config';
 import ServerError from './lib/ServerError';
+import './config/logger';
 
 passportConfig(); // run passport config
 
