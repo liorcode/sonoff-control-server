@@ -7,9 +7,13 @@ export default (conn: WebSocket) => {
   const ctrl = new SonoffRequestHandler(conn);
 
   conn.on('message', (message: string) => {
-    const reqMessage = JSON.parse(message);
-    logger.info('WS | Received message', reqMessage);
-    ctrl.handleRequest(reqMessage);
+    try {
+      const reqMessage = JSON.parse(message);
+      logger.info('WS | Received message', reqMessage);
+      ctrl.handleRequest(reqMessage);
+    } catch (e) { // avoid crashing the app for an invalid message
+      logger.error(`Cannot handle message '${message}'`, e);
+    }
   });
 
   conn.on('close', (code, reason) => {

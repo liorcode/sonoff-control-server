@@ -189,7 +189,9 @@ class SonoffRequestHandler {
    * Called when the device connection is closed
    */
   onClose() {
-    this.device.removeConnection();
+    if (this.device) {
+      this.device.removeConnection();
+    }
   }
 }
 
