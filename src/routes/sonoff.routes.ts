@@ -18,8 +18,8 @@ export default (app: Express) => {
       const msg = {
         error: 0,
         reason: 'ok',
-        IP: conf.WEBSOCKET_EXTERNAL_HOST,
-        port: conf.WEBSOCKET_EXTERNAL_PORT,
+        IP: conf.WEBSOCKET_SERVER.HOST,
+        port: conf.WEBSOCKET_SERVER.EXTERNAL_PORT,
       };
 
       logger.info('Sonoff is requesting websocket info', req.body, 'replying', msg);

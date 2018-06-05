@@ -47,7 +47,7 @@ function setDeviceConf() {
     version: 4,
     ssid: wifiSSID,
     password: wifiPassword,
-    serverName: process.env.API_EXTERNAL_HOST,
+    serverName: process.env.API_HOST,
     port: parseInt(process.env.API_EXTERNAL_PORT, 10),
   };
 
