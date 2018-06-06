@@ -3,6 +3,7 @@ import Device from '../../src/models/device.model';
 import DevicesController from '../../src/controllers/devices.controller';
 import { DeviceParams } from '../testData';
 
+const waitTick = () => new Promise(resolve => setImmediate(resolve));
 
 describe('Devices controller', () => {
   const device1 = { ...DeviceParams, name: 'kitchen' };
@@ -64,7 +65,7 @@ describe('Devices controller', () => {
   });
 
   it('updates allowed device attributes', () => {
-    const device = { ... DeviceParams, isOnline: true };
+    const device = { ... DeviceParams, isOnline: true, save: jest.fn().mockResolvedValue('') };
     const update = {
       name: 'hall',
       model: 'abc',
@@ -77,20 +78,18 @@ describe('Devices controller', () => {
     };
     const next = <NextFunction>jest.fn();
 
-    jest.spyOn(Device, 'findOneAndUpdate')
-      .mockImplementation((conditions, update, options, cb) => cb(null, updatedDevice));
+    jest.spyOn(Device, 'findOne')
+      .mockImplementation((conditions, cb) => cb(null, device));
 
     jest.spyOn(DevicesController, 'onDeviceUpdated')
       .mockImplementationOnce((device, params) => Promise.resolve());
 
     DevicesController.updateDevice(req, res, next);
-    expect(Device.findOneAndUpdate).toBeCalledWith(
-      { id: 2, user: undefined }, // conditions
-      { $set: { name: 'hall' } } , // update
-      { new: true },
-      expect.anything(), // callback
-    );
-    expect(DevicesController.onDeviceUpdated).toBeCalledWith(updatedDevice, { name: 'hall' });
+    expect(device).toMatchObject({ ...device, name: 'hall' })
+    expect(device.save).toBeCalled();
+    return waitTick().then(() => {
+      expect(DevicesController.onDeviceUpdated).toBeCalledWith(updatedDevice, { name: 'hall' });
+    });
   });
 
   describe('onDeviceUpdated', () => {

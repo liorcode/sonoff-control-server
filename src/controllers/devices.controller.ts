@@ -1,7 +1,7 @@
 import { model } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 import { IDeviceModel, IDeviceParams } from '../models/device.model';
-import { pick } from 'lodash';
+import { pick, merge } from 'lodash';
 
 const Device = model('Devices');
 
@@ -77,20 +77,20 @@ class DevicesController {
       'name',
       'state',
     ]);
-    Device.findOneAndUpdate(
-      { id: req.params.deviceId, user: req.user },
-      { $set: params }, { new: true },
-      (err, device: IDeviceModel) => {
-        if (err) {
-          return next(err);
-        }
 
-        return DevicesController.onDeviceUpdated(device, params)
-          .then(() => {
-            response.json(device);
-          }).catch(next);
-      },
-    );
+    Device.findOne({ id: req.params.deviceId, user: req.user }, (err, device: IDeviceModel) => {
+      if (err) {
+        return next(err);
+      }
+      // Merge current device attributes with the new attributes
+      merge(device, params);
+
+      return device.save()
+        .then(() => DevicesController.onDeviceUpdated(device, params))
+        .then(() => {
+          response.json(device);
+        }).catch(next);
+    });
   }
 
   /**
