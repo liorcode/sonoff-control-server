@@ -1,0 +1,7 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+    - "1080:1080"
+    - "1081:1081"
