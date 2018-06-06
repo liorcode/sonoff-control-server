@@ -2,6 +2,7 @@ import { model } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 import { IDeviceModel, IDeviceParams } from '../models/device.model';
 import { pick, merge } from 'lodash';
+import ServerError from '../lib/ServerError';
 
 const Device = model('Devices');
 
@@ -54,6 +55,9 @@ class DevicesController {
     Device.findOne({ id: req.params.deviceId, user: req.user }, (err, device) => {
       if (err) {
         return next(err);
+      }
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
       }
       return response.json(device);
     });

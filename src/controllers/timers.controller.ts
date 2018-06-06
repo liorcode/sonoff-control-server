@@ -5,6 +5,7 @@ import { get, last } from 'lodash';
 const Device = model('Devices');
 import { NextFunction, Request, Response } from 'express';
 import { IDeviceModel } from '../models/device.model';
+import ServerError from '../lib/ServerError';
 
 class TimersController {
   /**
@@ -72,6 +73,10 @@ class TimersController {
       if (err) {
         return next(err);
       }
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
+      }
+
       try {
         const timer = device.state.timers.id(timerId);
         response.json(timer);
@@ -103,6 +108,10 @@ class TimersController {
         return next(err);
       }
 
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
+      }
+
       try {
         const timer = device.state.timers.id(timerId);
         timer.set(req.body);
@@ -131,6 +140,10 @@ class TimersController {
     Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
+      }
+
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
       }
 
       try {
