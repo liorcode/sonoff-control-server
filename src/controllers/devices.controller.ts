@@ -2,6 +2,7 @@ import { model } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 import { IDeviceModel, IDeviceParams } from '../models/device.model';
 import { pick, merge } from 'lodash';
+import config from '../config/config';
 import ServerError from '../lib/ServerError';
 
 const Device = model('Devices');
@@ -86,11 +87,16 @@ class DevicesController {
       if (err) {
         return next(err);
       }
+
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
+      }
+
       // Merge current device attributes with the new attributes
       merge(device, params);
 
-      return device.save()
-        .then(() => DevicesController.onDeviceUpdated(device, params))
+      return DevicesController.onDeviceUpdated(device, params)
+        .then(() => device.save())
         .then(() => {
           response.json(device);
         }).catch(next);
@@ -109,12 +115,12 @@ class DevicesController {
    *    Otherwise: resolved immediately.
    */
   static onDeviceUpdated(device: IDeviceModel, params: Partial<IDeviceParams>): Promise<void> {
-    if (!params.state) {
+    if (!params.state || config.DISABLE_DEVICE_SYNC) { // if there is no state, or if device sync is disabled
       return Promise.resolve();
     }
 
     if (!device.isOnline) {
-      return Promise.reject(new Error('Device attributes updated, but not synced: device is offline'));
+      return Promise.reject(new Error('Cannot update device state: device is offline'));
     }
     return device.getConnection()
       .syncState(params.state);
