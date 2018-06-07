@@ -10,7 +10,7 @@
     "serve-watch": "nodemon ./dist/server",
     "start": "npm run build && npm run serve",
     "watch": "concurrently -k \"npm run build && npm run serve-watch\" \"npm run build-watch\"",
-    "test": "jest"
+    "test": "DISABLE_DEVICE_SYNC=true jest"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

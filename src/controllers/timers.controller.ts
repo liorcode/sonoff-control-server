@@ -1,11 +1,12 @@
 import logger from 'winston';
 import { model } from 'mongoose';
-import { get, last } from 'lodash';
+import { get, last, pick, merge } from 'lodash';
 
 const Device = model('Devices');
 import { NextFunction, Request, Response } from 'express';
 import { IDeviceModel } from '../models/device.model';
 import ServerError from '../lib/ServerError';
+import config from '../config/config';
 
 class TimersController {
   /**
@@ -18,9 +19,13 @@ class TimersController {
   static create(req: Request, response: Response, next: NextFunction) {
     const { deviceId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
+      }
+
+      if (!device) {
+        return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
       }
 
       try {
@@ -48,12 +53,17 @@ class TimersController {
   static list(req: Request, response: Response, next: NextFunction) {
     const { deviceId } = req.params;
 
-    Device.findOne({ deviceId })
+    Device.findOne({ id: deviceId })
       .select('state.timers')
       .exec((err, device) => {
         if (err) {
           return next(err);
         }
+
+        if (!device) {
+          return next(new ServerError('Requested device does not exist', 404, req.originalUrl));
+        }
+
         const timers = get(device, 'state.timers', []);
         response.json(timers);
       });
@@ -69,7 +79,7 @@ class TimersController {
   static getTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -79,9 +89,14 @@ class TimersController {
 
       try {
         const timer = device.state.timers.id(timerId);
+
+        if (!timer) {
+          return next(new ServerError('Requested timer does not exist', 404, req.originalUrl));
+        }
+
         response.json(timer);
       } catch (e) {
-        logger.error(e);
+        console.log(e);
         return next(new Error(`Cannot find timer ${timerId}`));
       }
     });
@@ -103,7 +118,7 @@ class TimersController {
   static updateTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -114,13 +129,13 @@ class TimersController {
 
       try {
         const timer = device.state.timers.id(timerId);
-        timer.set(req.body);
+        const update = pick(req.body, ['do', 'enabled', 'at', 'type']);
+        merge(timer, update);
 
         TimersController.onTimerUpdated(device)
-          .then(() => {
-            device.save();
-            response.json(timer);
-          }).catch(next);
+          .then(() => device.save())
+          .then(() => response.json(timer))
+          .catch(next);
       } catch (e) {
         logger.error(e);
         return next(new Error(`Cannot update timer ${timerId}: ${e.message}`));
@@ -137,7 +152,7 @@ class TimersController {
   static deleteTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -151,10 +166,9 @@ class TimersController {
         timer.remove();
 
         TimersController.onTimerUpdated(device)
-          .then(() => {
-            device.save();
-            response.json({});
-          }).catch(next);
+          .then(() => device.save())
+          .then(() => response.json({ message: 'Timer successfully deleted' }))
+          .catch(next);
       } catch (e) {
         return next(new Error(`Unable to delete timer ${timerId}: ${e}`));
       }
@@ -170,6 +184,10 @@ class TimersController {
    * @returns {Promise} - resolves when the device has synced successfully
    */
   static onTimerUpdated(device: IDeviceModel) {
+    if (config.DISABLE_DEVICE_SYNC) {
+      return Promise.resolve();
+    }
+
     if (!device.isOnline) {
       return Promise.reject(new Error('Cannot sync device: device is offline'));
     }
