@@ -4,6 +4,7 @@ import WebSocket from 'ws';
 import DeviceSocket from '../lib/deviceSocket';
 import Device, { IDeviceModel } from '../models/device.model';
 import config from '../config/config';
+import { ITimerModel } from '../models/timer.schema';
 
 type SonoffRequest = {
   [key: string]: any;
@@ -86,10 +87,19 @@ class SonoffRequestHandler {
   }
 
   handleTimersRequest() {
+    const deviceTimers = this.device.get('state.timers');
+
+    const timersFormatted = !Array.isArray(deviceTimers) ? []
+      : deviceTimers.map((timer: ITimerModel) => ({
+        enabled: Number(timer.enabled), // convert boolean to 0/1
+        at: timer.at,
+        type: timer.type,
+        do: { switch: timer.do.switch },
+      }));
+
     this.respond({
-      params: [
-        { timers: this.device.get('state.timers') },
-      ],
+      // if there are no timers, set params to 0
+      params: timersFormatted.length === 0 ? 0 : [{ timers: timersFormatted }],
     });
   }
 

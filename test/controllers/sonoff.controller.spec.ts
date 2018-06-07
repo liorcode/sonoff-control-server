@@ -19,10 +19,12 @@ describe('Sonoff controller', () => {
   describe('handleRequest', () => {
     beforeEach(() => {
       jest.spyOn(ctrl, 'handleAction')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       jest.spyOn(ctrl, 'handleAck')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
     });
     it('calls handleAction if action is passed in request', () => {
       const req = { action: 'register' };
@@ -32,7 +34,7 @@ describe('Sonoff controller', () => {
     });
 
     it('calls handleAck if no action is passed in request', () => {
-      const req = { };
+      const req = {};
       ctrl.handleRequest(req);
       expect(ctrl.handleAction).not.toBeCalled();
       expect(ctrl.handleAck).toBeCalledWith(req);
@@ -42,16 +44,20 @@ describe('Sonoff controller', () => {
   describe('handleRequest', () => {
     beforeEach(() => {
       jest.spyOn(ctrl, 'handleDate')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       jest.spyOn(ctrl, 'handleRegister')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       jest.spyOn(ctrl, 'handleQuery')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       jest.spyOn(ctrl, 'handleUpdate')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
     });
     it('calls handleDate', () => {
       const req = { action: 'date' };
@@ -92,7 +98,8 @@ describe('Sonoff controller', () => {
   describe('handleQuery', () => {
     it('handles timers query', () => {
       jest.spyOn(ctrl, 'handleTimersRequest')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       const req = { params: ['timers'] };
       ctrl.handleQuery(req);
@@ -101,7 +108,8 @@ describe('Sonoff controller', () => {
 
     it('responds with error to unknown query', () => {
       jest.spyOn(ctrl, 'respondError')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       const req = <any>{ params: [] };
       ctrl.handleQuery(req);
@@ -109,7 +117,7 @@ describe('Sonoff controller', () => {
     });
   });
 
-  it('responds to timer request', () => {
+  it('responds to timer request (no timers)', () => {
     jest.spyOn(ctrl, 'respond')
       .mockImplementationOnce(() => {});
 
@@ -117,19 +125,52 @@ describe('Sonoff controller', () => {
 
     ctrl.handleTimersRequest();
     expect(ctrl.respond).toBeCalledWith(
-      { params: [{ timers: null }] },
+      { params: 0 },
+    );
+  });
+
+  it('responds to timer request (with timers)', () => {
+    jest.spyOn(ctrl, 'respond')
+      .mockImplementationOnce(() => {
+      });
+
+    ctrl.device = <IDeviceModel>new Device({
+      ...DeviceParams,
+      state: {
+        timers: [{
+          enabled: true,
+          do: { switch: 'on' },
+          at: '* * * * * *',
+          type: 'repeat',
+        }],
+      },
+    });
+
+    ctrl.handleTimersRequest();
+    expect(ctrl.respond).toBeCalledWith({
+      params: [{
+        timers: [{
+          enabled: 1,
+          do: { switch: 'on' },
+          at: '* * * * * *',
+          type: 'repeat',
+        }],
+      }]},
     );
   });
 
   it('responds to update request', () => {
     jest.spyOn(ctrl, 'respond')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     jest.spyOn(ctrl, 'respondError')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     jest.spyOn(device, 'set')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     jest.spyOn(device, 'save')
       .mockImplementationOnce(() => Promise.resolve());
@@ -165,7 +206,8 @@ describe('Sonoff controller', () => {
 
   it('responds to date request', () => {
     jest.spyOn(ctrl, 'respond')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     ctrl.device = device;
 
@@ -185,10 +227,12 @@ describe('Sonoff controller', () => {
         .mockImplementation(() => Promise.resolve());
 
       jest.spyOn(device, 'setConnection')
-        .mockImplementation(() => {});
+        .mockImplementation(() => {
+        });
 
       jest.spyOn(ctrl, 'respond')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       const req = {
         model: 'mod',
@@ -214,10 +258,12 @@ describe('Sonoff controller', () => {
         .mockImplementation(() => Promise.resolve());
 
       jest.spyOn(device, 'setConnection')
-        .mockImplementation(() => {});
+        .mockImplementation(() => {
+        });
 
       jest.spyOn(ctrl, 'respond')
-        .mockImplementationOnce(() => {});
+        .mockImplementationOnce(() => {
+        });
 
       jest.spyOn(ctrl, 'onRegisterNonExistingDevice')
         .mockImplementationOnce(() => device);
@@ -248,7 +294,8 @@ describe('Sonoff controller', () => {
 
   it('sends response', () => {
     jest.spyOn(ws, 'send')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     ctrl.device = device;
 
@@ -263,7 +310,8 @@ describe('Sonoff controller', () => {
 
   it('sends error response', () => {
     jest.spyOn(ws, 'send')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     ctrl.device = device;
 
@@ -279,7 +327,8 @@ describe('Sonoff controller', () => {
     ctrl.device = device;
 
     jest.spyOn(ctrl.device, 'removeConnection')
-      .mockImplementationOnce(() => {});
+      .mockImplementationOnce(() => {
+      });
 
     ctrl.onClose();
 

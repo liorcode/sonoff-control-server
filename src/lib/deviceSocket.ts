@@ -1,13 +1,20 @@
 import logger from 'winston';
 import WebSocket from 'ws';
+import { pick } from 'lodash';
 import { IDeviceModel, IDeviceState } from '../models/device.model';
 import { ITimerParams } from '../models/timer.schema';
+
+interface ITimerMessage {
+  enabled: number;
+  type: 'once' | 'repeat';
+  at: string;
+  do: { switch: 'on' | 'off' };
+}
 
 interface IDeviceMessage {
   switch?: 'on' | 'off';
   startup?: 'on' | 'off' | 'keep';
-  rssi?: number;
-  timers?: ITimerParams[] | 0;
+  timers?: ITimerMessage[] | 0;
 }
 
 class DeviceSocket {
@@ -37,13 +44,13 @@ class DeviceSocket {
         reject(new Error('Cannot sync device state: timeout'));
       }, 2000);
 
-      const message: IDeviceMessage = Object.assign({}, newState);
-      if (message.timers) {
+      const message: IDeviceMessage = pick(newState, 'startup', 'switch');
+      if (newState.timers) {
         // when there are no timers, the timers property must be 0
-        message.timers = message.timers.length === 0 ? 0
+        message.timers = newState.timers.length === 0 ? 0
           // if there are timers, just get the needed props
-          : message.timers.map((timer: ITimerParams) => ({
-            enabled: timer.enabled,
+          : newState.timers.map((timer: ITimerParams) => ({
+            enabled: Number(timer.enabled), // convert boolean to 0/1
             at: timer.at,
             type: timer.type,
             do: { switch: timer.do.switch },
