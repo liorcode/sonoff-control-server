@@ -137,24 +137,22 @@ describe('Sonoff controller', () => {
     ctrl.device = <IDeviceModel>new Device({
       ...DeviceParams,
       state: {
-        timers: [{
-          enabled: true,
-          do: { switch: 'on' },
-          at: '* * * * * *',
-          type: 'repeat',
-        }],
+        timers: [
+          { enabled: true, do: { switch: 'on' }, at: '* * * * * *', type: 'repeat' }, // repeat
+          { enabled: true, do: { switch: 'on' }, at: '2100-06-07T20:00:00.000Z', type: 'once' }, // future
+          { enabled: true, do: { switch: 'on' }, at: '2018-06-07T20:00:00.000Z', type: 'once' }, // past
+        ],
       },
     });
 
     ctrl.handleTimersRequest();
+    // only repeat or future timers should be returned
     expect(ctrl.respond).toBeCalledWith({
       params: [{
-        timers: [{
-          enabled: 1,
-          do: { switch: 'on' },
-          at: '* * * * * *',
-          type: 'repeat',
-        }],
+        timers: [
+          { enabled: 1, do: { switch: 'on' }, at: '* * * * * *', type: 'repeat' },
+          { enabled: 1, do: { switch: 'on' }, at: '2100-06-07T20:00:00.000Z', type: 'once' },
+        ],
       }]},
     );
   });

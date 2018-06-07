@@ -88,14 +88,18 @@ class SonoffRequestHandler {
 
   handleTimersRequest() {
     const deviceTimers = this.device.get('state.timers');
+    const now = new Date();
 
     const timersFormatted = !Array.isArray(deviceTimers) ? []
-      : deviceTimers.map((timer: ITimerModel) => ({
-        enabled: Number(timer.enabled), // convert boolean to 0/1
-        at: timer.at,
-        type: timer.type,
-        do: { switch: timer.do.switch },
-      }));
+      : deviceTimers
+        // get only repeat timers or one time future timers
+        .filter((timer: ITimerModel) => timer.type === 'repeat' || (new Date(timer.at) > now))
+        .map((timer: ITimerModel) => ({
+          enabled: Number(timer.enabled), // convert boolean to 0/1
+          at: timer.at,
+          type: timer.type,
+          do: { switch: timer.do.switch },
+        }));
 
     this.respond({
       // if there are no timers, set params to 0
