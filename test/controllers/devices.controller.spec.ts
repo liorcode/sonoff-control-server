@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import Device from '../../src/models/device.model';
 import DevicesController from '../../src/controllers/devices.controller';
 import { DeviceParams } from '../testData';
+import config from '../../src/config/config';
 
 const waitTick = () => new Promise(resolve => setImmediate(resolve));
 
@@ -85,10 +86,10 @@ describe('Devices controller', () => {
       .mockImplementationOnce((device, params) => Promise.resolve());
 
     DevicesController.updateDevice(req, res, next);
-    expect(device).toMatchObject({ ...device, name: 'hall' })
-    expect(device.save).toBeCalled();
+    expect(device).toMatchObject({ ...device, name: 'hall' });
+    expect(DevicesController.onDeviceUpdated).toBeCalledWith(updatedDevice, { name: 'hall' });
     return waitTick().then(() => {
-      expect(DevicesController.onDeviceUpdated).toBeCalledWith(updatedDevice, { name: 'hall' });
+      expect(device.save).toBeCalled();
     });
   });
 
@@ -104,6 +105,7 @@ describe('Devices controller', () => {
     });
 
     it('calls syncDevice state was updated', () => {
+      config.DISABLE_DEVICE_SYNC = false; // to test this, we must enable device sync
       const syncSpy = jest.fn().mockResolvedValue(undefined);
       const device = {
         ... DeviceParams,
@@ -114,6 +116,8 @@ describe('Devices controller', () => {
       return DevicesController.onDeviceUpdated(<any>device, { state: { switch: 'on' } })
         .then(() => {
           expect(syncSpy).toBeCalledWith({ switch: 'on' });
+
+          config.DISABLE_DEVICE_SYNC = true; // set back to original value (disable sync during tests)
         });
     });
 

@@ -16,6 +16,7 @@ export interface ServerConfiguration {
 }
 
 export default {
+  DISABLE_DEVICE_SYNC: <boolean> toBoolean(process.env.DISABLE_DEVICE_SYNC), // useful for tests
   GOOGLE_CLIENT_ID: <string> process.env.GOOGLE_CLIENT_ID,
   MONGO_URI: <string> process.env.MONGO_URI,
   MULTI_USER: <boolean> toBoolean(process.env.MULTI_USER),

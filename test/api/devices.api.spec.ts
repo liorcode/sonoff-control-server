@@ -65,16 +65,17 @@ describe('devices', () => {
     expect(response.body).toMatchObject(createdDevice);
   });
 
-  it('should update offline device switch (with sync failure)', async () => {
+  it('should update device switch', async () => {
     const response = await request(app).patch(`/devices/${createdDevice.id}`)
       .set('Accept', 'application/json')
       .send({
         state: { switch: 'on' },
       });
-    expect(response.status).toBe(500);
-    expect(response.body).toMatchObject({ message: 'Device attributes updated, but not synced: device is offline' });
-
+    expect(response.status).toBe(200);
     createdDevice.state.switch = 'on';
+    expect(response.body).toMatchObject(createdDevice);
+
+    // Get updated device and test again
     const updatedResponse = await request(app).get(`/devices/${createdDevice.id}`);
     expect(updatedResponse.body).toMatchObject(createdDevice);
   });
@@ -89,10 +90,10 @@ describe('devices', () => {
           timers: [timer1, timer2],
         },
       });
-    expect(response.status).toBe(500);
-    expect(response.body).toMatchObject({ message: 'Device attributes updated, but not synced: device is offline' });
-
+    expect(response.status).toBe(200);
     createdDevice.state.timers = [timer1, timer2];
+    expect(response.body).toMatchObject(createdDevice);
+
     const updatedResponse = await request(app).get(`/devices/${createdDevice.id}`);
     expect(updatedResponse.body).toMatchObject(createdDevice);
   });
