@@ -34,7 +34,8 @@ describe('Sonoff controller', () => {
     });
 
     it('calls handleAck if no action is passed in request', () => {
-      const req = {};
+      const req = { sequence: 1 };
+      ctrl.device = device;
       ctrl.handleRequest(req);
       expect(ctrl.handleAction).not.toBeCalled();
       expect(ctrl.handleAck).toBeCalledWith(req);
