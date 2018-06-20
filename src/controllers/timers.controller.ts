@@ -96,7 +96,6 @@ class TimersController {
 
         response.json(timer);
       } catch (e) {
-        console.log(e);
         return next(new Error(`Cannot find timer ${timerId}`));
       }
     });
@@ -129,6 +128,9 @@ class TimersController {
 
       try {
         const timer = device.state.timers.id(timerId);
+        if (!timer) {
+          return next(new ServerError('Requested timer does not exist', 404, req.originalUrl));
+        }
         const update = pick(req.body, ['do', 'enabled', 'at', 'type']);
         merge(timer, update);
 
@@ -163,6 +165,9 @@ class TimersController {
 
       try {
         const timer = device.state.timers.id(timerId);
+        if (!timer) {
+          return next(new ServerError('Requested timer does not exist', 404, req.originalUrl));
+        }
         timer.remove();
 
         TimersController.onTimerUpdated(device)
