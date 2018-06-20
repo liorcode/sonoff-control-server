@@ -25,9 +25,11 @@ class SonoffRequestHandler {
     if (req.action) {
       // device want to do something
       this.handleAction(req);
-    } else {
+    } else if (this.device && req.sequence) {
       // device is acknowledging an action
       this.handleAck(req);
+    } else {
+      logger.error('Unable to handle request', req);
     }
   }
 
