@@ -11,7 +11,7 @@ interface ITimerMessage {
   do: { switch: 'on' | 'off' };
 }
 
-interface IDeviceMessage {
+export interface IDeviceMessage {
   switch?: 'on' | 'off';
   startup?: 'on' | 'off' | 'keep';
   timers?: ITimerMessage[] | 0;
@@ -46,15 +46,7 @@ class DeviceSocket {
 
       const message: IDeviceMessage = pick(newState, 'startup', 'switch');
       if (newState.timers) {
-        // when there are no timers, the timers property must be 0
-        message.timers = newState.timers.length === 0 ? 0
-          // if there are timers, just get the needed props
-          : newState.timers.map((timer: ITimerParams) => ({
-            enabled: Number(timer.enabled), // convert boolean to 0/1
-            at: timer.at,
-            type: timer.type,
-            do: { switch: timer.do.switch },
-          }));
+        message.timers = this.formatTimers(newState.timers);
       }
 
       return this.sendMessage(message).then(() => {
@@ -62,6 +54,23 @@ class DeviceSocket {
         clearInterval(timeout);
       }, reject);
     });
+  }
+
+  /**
+   * Format the timers params to the format expected by the device
+   * @param {ITimerParams[]} timers
+   * @return {ITimerMessage[]}
+   */
+  formatTimers(timers: ITimerParams[]) {
+    // when there are no timers, the timers property must be 0
+    return !Array.isArray(timers) || timers.length === 0 ? 0
+      // if there are timers, just get the needed props
+      : timers.map((timer: ITimerParams) => ({
+        enabled: Number(timer.enabled), // convert boolean to 0/1
+        at: timer.at,
+        type: timer.type,
+        do: { switch: timer.do.switch },
+      }));
   }
 
   /**
