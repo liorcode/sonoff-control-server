@@ -26,8 +26,7 @@ class WsHandler {
     this.conn.on('close', this.onClose.bind(this));
     this.conn.on('pong', this.heartbeat.bind(this));
 
-    // Ping every 30 seconds
-    this.interval = setInterval(this.ping.bind(this), PING_INTERVAL);
+    this.startPinging();
   }
 
   /**
@@ -51,10 +50,18 @@ class WsHandler {
    * @param {string} reason
    */
   onClose (code: number, reason: string) {
-    logger.warn('WS | Connection closed');
+    logger.warn(`WS | Connection closed. Code: ${code}, message: ${reason}`);
     this.isAlive = false;
     clearInterval(this.interval);
     this.messageHandler.onClose();
+  }
+
+  /**
+   * Start pinging (sending ping messages) in intervals.
+   */
+  startPinging() {
+    // Ping every 30 seconds
+    this.interval = setInterval(this.ping.bind(this), PING_INTERVAL);
   }
 
   /**
@@ -68,7 +75,7 @@ class WsHandler {
       return this.conn.terminate();
     }
     // Marks the connection as inactive and fire a "ping" event. if "pong" will be received, mark it back as alive
-    this.isAlive = true;
+    this.isAlive = false;
     logger.info('PING?');
     this.conn.ping(() => {}); // noop
   }
@@ -76,9 +83,8 @@ class WsHandler {
   /**
    * Called on "pong" event.
    * Marks the connection as "active"
-   * @param {WebSocket} conn
    */
-  heartbeat(conn: WebSocket) {
+  heartbeat() {
     logger.info('PONG!');
     this.isAlive = true;
   }
