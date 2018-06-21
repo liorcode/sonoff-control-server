@@ -234,3 +234,7 @@ Any of the following commands can run by `npm run` or `yarn`.
 `start` -  Builds the project, then serves it (build+serve scripts)   
 `test` - Run tests using jest  
 `watch` -  Compiles project and start server, in watch mode    
+
+
+# Alexa Skill
+An [Alexa Skill](https://github.com/liorcode/sonoff-control-server-alexa-skill) is available to control this server.
