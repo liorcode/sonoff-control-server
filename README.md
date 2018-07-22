@@ -61,6 +61,10 @@ See [Available Commands](#available-commands) for more running options.
 
 This step must happen after the [config](#configuration) and [install](#installing-and-running) steps.
 
+For automatic pairing, you need to install the "wifi-control" package:  
+`npm install wifi-control`  
+(it is intentionally not included by package.json, as it's not always needed)
+
 1. Set device in pairing mode by long-pressing the button in your sonoff device.
 2. Run the pairing script: `node pair-device.cli --ssid YOUR_SSID --password --YOUR_WIFI_PASSWORD`
 3. Your device will now connect to your WiFi network and your server (it will automatically retry if server is down)

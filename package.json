@@ -17,8 +17,8 @@
     "concurrently": "^3.5.1",
     "debug": "~2.6.9",
     "dotenv": "^5.0.1",
-    "express": "~4.15.5",
-    "google-auth-library": "^1.4.0",
+    "express": "^4.16.3",
+    "google-auth-library": "^1.6.1",
     "lodash": "^4.17.5",
     "mongodb": "^3.0.1",
     "mongoose": "^5.0.9",
@@ -44,7 +44,7 @@
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.9",
     "@types/ws": "^4.0.2",
-    "jest": "^22.4.3",
+    "jest": "^23.4.1",
     "jest-extended": "^0.7.1",
     "nodemon": "^1.14.11",
     "request": "^2.86.0",
@@ -54,7 +54,6 @@
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.3",
-    "wifi-control": "^2.0.1",
     "yargs": "^11.0.0"
   }
 }
