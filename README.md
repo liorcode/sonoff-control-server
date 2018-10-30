@@ -197,12 +197,19 @@ POST /devices/10001f56ff/timers
 ```
 
 ##### Add a repeat timer
+
+The cron format is composed of 5 fields, which look like this:  
+<Minute> <Hour> <Day_of_the_Month> <Month_of_the_Year> <Day_of_the_Week>  
+Notes:
+* It seems the "Day of month" and "Month of year" fields must be "*".
+* "Day of the Week" is zero-based and can be comma separated to mention several days (2,3 for Tuesday and Wedensday)
+* Time zone is UTC
 ```
 POST /devices/10001f56ff/timers
 {
   enabled: true,
   type: 'repeat',
-  at: '18 0 * * 3 *', // each wedensday at 6:00 pm
+  at: '18 0 * * 3', // every wedensday at 6:00 pm
   do: { switch: 'on' }
 }
 ```
