@@ -76,7 +76,7 @@ class WsHandler {
     }
     // Marks the connection as inactive and fire a "ping" event. if "pong" will be received, mark it back as alive
     this.isAlive = false;
-    logger.info('PING?');
+    logger.debug('PING?');
     this.conn.ping(() => {}); // noop
   }
 
@@ -85,7 +85,7 @@ class WsHandler {
    * Marks the connection as "active"
    */
   heartbeat() {
-    logger.info('PONG!');
+    logger.debug('PONG!');
     this.isAlive = true;
   }
 }
