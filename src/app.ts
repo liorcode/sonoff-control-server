@@ -10,6 +10,7 @@ import passportConfig from './config/passport';
 import conf from './config/config';
 import ServerError from './lib/ServerError';
 import './config/logger';
+import logger from 'winston';
 
 passportConfig(); // run passport config
 
@@ -33,6 +34,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // error handler. Must expect 4 args to work
 app.use((err: ServerError, req: Request, res: Response, next: NextFunction) => {
   res.status(err.status || 500);
+  logger.error(err.message);
   res.json({
     message: err.message,
     error: req.app.get('env') === 'development' ? err : {},
