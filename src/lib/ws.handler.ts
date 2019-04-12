@@ -1,6 +1,7 @@
 import WebSocket from 'ws';
 import logger from 'winston';
 import SonoffRequestHandler from '../controllers/sonoff.controller';
+import { get } from 'lodash';
 
 const PING_INTERVAL = 30000; // ping every 30 seconds
 
@@ -10,6 +11,10 @@ class WsHandler {
   interval: number;
 
   constructor(readonly conn: WebSocket) {
+  }
+
+  get deviceId() {
+    return get(this, 'messageHandler.device.id', 'unknown device');
   }
 
   /**
@@ -50,7 +55,7 @@ class WsHandler {
    * @param {string} reason
    */
   onClose (code: number, reason: string) {
-    logger.warn(`WS | Connection closed. Code: ${code}, message: ${reason}`);
+    logger.warn(`WS | ${this.deviceId} | Connection closed. Code: ${code}, message: ${reason}`);
     this.isAlive = false;
     clearInterval(this.interval);
     this.messageHandler.onClose();
@@ -70,13 +75,13 @@ class WsHandler {
    */
   ping() {
     if (!this.isAlive) {
-      logger.warn('No pong received in %d seconds. terminating connection', PING_INTERVAL / 1000);
+      logger.warn(`WS | ${this.deviceId} | No pong received in %d seconds. terminating connection`, PING_INTERVAL / 1000);
       // if connection not marked as alive, it means that 30 seconds has passed thing last "ping". terminate it.
       return this.conn.terminate();
     }
     // Marks the connection as inactive and fire a "ping" event. if "pong" will be received, mark it back as alive
     this.isAlive = false;
-    logger.debug('PING?');
+    logger.debug(`${this.deviceId} | PING?`);
     this.conn.ping(() => {}); // noop
   }
 
@@ -85,7 +90,7 @@ class WsHandler {
    * Marks the connection as "active"
    */
   heartbeat() {
-    logger.debug('PONG!');
+    logger.debug(`${this.deviceId} | PONG!`);
     this.isAlive = true;
   }
 }

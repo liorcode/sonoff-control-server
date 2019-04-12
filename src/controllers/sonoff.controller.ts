@@ -111,6 +111,10 @@ class SonoffRequestHandler {
 
   handleUpdate(req: SonoffRequest) {
     const { params } = req;
+    if (!this.device.isOnline) {
+      logger.warn(`Updated received for device ${this.device.id} but connection does not exist. creating...`);
+      this.device.setConnection(new DeviceSocket(this.connection, this.apiKey, this.device));
+    }
     this.device.set({
       version: params.fwVersion,
       state: {
