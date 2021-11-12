@@ -34,6 +34,9 @@ export default function (conf: ServerConfiguration, app?: Express) {
         logger.error(`Port ${conf.PORT} is already in use`);
         process.exit(1);
         break;
+      case 'ECONNRESET':
+        logger.warn('Connection reset');
+        break;
       default:
         throw error;
     }
