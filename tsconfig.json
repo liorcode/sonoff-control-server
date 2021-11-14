@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "skipLibCheck": true,
+    "strict": false,
     "esModuleInterop": true,
     "target": "es6",
     "noImplicitAny": true,

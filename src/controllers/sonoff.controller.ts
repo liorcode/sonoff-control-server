@@ -146,7 +146,7 @@ class SonoffRequestHandler {
    * @param {SonoffRequest} req
    */
   handleRegister(req: SonoffRequest) {
-    Device.findOne({ id: req.deviceid }, (err, foundDevice: IDeviceModel) => {
+    Device.findOne({ id: req.deviceid }, (err: Error, foundDevice: IDeviceModel) => {
       let device = foundDevice;
 
       if (foundDevice === null) { // trying to register non existing device

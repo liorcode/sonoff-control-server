@@ -1,6 +1,6 @@
 import passport from 'passport';
 import GoogleVerifyTokenStrategy from '../lib/passport-google-strategy';
-import User from '../models/user.model';
+import User, { IUserModel } from '../models/user.model';
 import conf from './config';
 
 const config = () => {
@@ -11,7 +11,7 @@ const config = () => {
   passport.use(new GoogleVerifyTokenStrategy({
     clientID: conf.GOOGLE_CLIENT_ID,
   }, (payload, done) => {
-    User.findOne({ googleId: payload.sub }, (err, user) => {
+    User.findOne({ googleId: payload.sub }, (err: Error, user: IUserModel) => {
       if (err) {
         return done(err, false);
       }

@@ -19,7 +19,7 @@ class TimersController {
   static create(req: Request, response: Response, next: NextFunction) {
     const { deviceId } = req.params;
 
-    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err: Error, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -79,7 +79,7 @@ class TimersController {
   static getTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err: Error, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -117,7 +117,7 @@ class TimersController {
   static updateTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err: Error, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }
@@ -154,7 +154,7 @@ class TimersController {
   static deleteTimer(req: Request, response: Response, next: NextFunction) {
     const { deviceId, timerId } = req.params;
 
-    Device.findOne({ id: deviceId }, (err, device: IDeviceModel) => {
+    Device.findOne({ id: deviceId }, (err: Error, device: IDeviceModel) => {
       if (err) {
         return next(err);
       }

@@ -8,7 +8,7 @@ const PING_INTERVAL = 30000; // ping every 30 seconds
 class WsHandler {
   messageHandler: SonoffRequestHandler;
   isAlive: boolean;
-  interval: number;
+  interval: NodeJS.Timer;
 
   constructor(readonly conn: WebSocket) {
   }
