@@ -17,7 +17,7 @@
     "concurrently": "^3.5.1",
     "debug": "~2.6.9",
     "dotenv": "^5.0.1",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "google-auth-library": "^1.6.1",
     "lodash": "^4.17.13",
     "mongodb": "^3.0.1",
