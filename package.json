@@ -46,7 +46,7 @@
     "@types/ws": "^4.0.2",
     "jest": "^23.4.1",
     "jest-extended": "^0.7.1",
-    "nodemon": "^1.14.11",
+    "nodemon": "^2.0.22",
     "request": "^2.86.0",
     "request-promise-native": "^1.0.5",
     "supertest": "^3.1.0",
